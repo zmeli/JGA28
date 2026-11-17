@@ -318,11 +318,17 @@ details.zusatz[open]>summary{margin-bottom:10px}
 .tl-spalte{position:relative}
 .tl-spalte.neben{border-radius:var(--r-sm);background:repeating-linear-gradient(135deg,transparent 0 9px,rgb(238 231 220 / .5) 9px 10px)}
 .tl-spalte.fahrt{border-radius:var(--r-sm);background:repeating-linear-gradient(135deg,transparent 0 9px,rgb(236 123 162 / .09) 9px 10px)}
-/* Signale im Hauptablauf: Bus = Fahrt läuft, Cocktail = Getränke sind vorbereitet */
-.tl-icons{position:absolute;top:4px;right:5px;display:flex;align-items:center;gap:3px;pointer-events:none}
-.tl-icons .bus{width:20px;height:12px}
-.tl-icons .cocktail{width:13px;height:13px}
-.tl-block.mit-icons{padding-right:44px}
+/* Verbindung zwischen zwei Punkten: Bus = Fahrt, Cocktail = Getränke vorbereitet */
+.tl-luecke.verbindung{z-index:3}
+.verbindung .luecke-pill{height:auto;min-height:36px;padding:4px 12px 4px 8px;gap:8px;border:1px solid #F3C9D8;box-shadow:0 2px 8px rgb(31 27 22 / .07);font-size:11.5px}
+.verbindung.art-drink .luecke-pill{border-color:#E2D3EC}
+.lk-icons{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto}
+.verbindung .bus{width:42px;height:26px}
+.verbindung .cocktail{width:26px;height:26px}
+.lk-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-luecke.verbindung{padding:6px 12px 6px 8px;gap:8px}
+.ls-luecke.verbindung .bus{width:36px;height:22px}
+.ls-luecke.verbindung .cocktail{width:22px;height:22px}
 .cocktail{width:14px;height:14px;flex:0 0 auto;transform-origin:50% 95%;animation:schwenken 1.8s ease-in-out infinite alternate}
 @keyframes schwenken{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
 .still{animation:none!important}
@@ -1478,22 +1484,34 @@ function tagAufbereiten(items, startMin, startOrt, nr) {
     p._drink = getraenke(p._s, p._e).length > 0;
   });
 
+  // Übergänge zwischen zwei Punkten: freie Lücken (≥ 15 min) und jede Stelle, an der eine Fahrt
+  // oder Getränke geplant sind – auch wenn zwei Punkte direkt aneinander anschließen.
   const luecken = [];
-  const luecke = (p, von, bis, wechsel, a, b) => luecken.push({ p: p, tag: nr, von: von, bis: bis, wechsel: wechsel, ortA: a, ortB: b });
+  const imFenster = (liste, von, bis) => bis > von
+    ? liste.filter(x => x._s < bis && x._e > von)
+    : liste.filter(x => x._s <= von && x._e >= von);
+  const uebergang = (p, von, bis, wechsel, a, b) => {
+    const l = { p: p, tag: nr, von: von, bis: bis, wechsel: wechsel, ortA: a, ortB: b };
+    l.fahrt = imFenster(fahrt, von, bis);
+    l.drinks = imFenster(neben, von, bis).filter(n => n._kat === 'Getränke');
+    const f = l.fahrt.find(x => x.ort);
+    if (f && !l.ortB) l.ortB = String(f.ort).trim();
+    if (l.fahrt.length) l.wechsel = false;
+    if (bis - von >= 15 || l.fahrt.length || l.drinks.length) luecken.push(l);
+    else if (l.wechsel && p) p._hinweis = `Ortswechsel von ${a} – Fahrt einplanen?`;
+  };
   const extra = fahrt.concat(neben);
   let vorEnde = startMin, vorOrt = startOrt || '', vorKat = '';
   haupt.forEach((p, i) => {
     // Vor dem ersten Eintrag (ohne Startzeit): Fahrt/Getränke davor sichtbar machen
     if (i === 0 && vorEnde == null) {
       const davor = extra.filter(x => x._s < p._s);
-      if (davor.length) { const von = Math.min(...davor.map(x => x._s)); if (p._s - von >= 15) luecke(p, von, p._s, false, '', String(p.ort || '').trim()); }
+      if (davor.length) uebergang(p, Math.min(...davor.map(x => x._s)), p._s, false, '', String(p.ort || '').trim());
     }
     if (vorEnde != null && p._s >= vorEnde) {
       const a = String(vorOrt || '').trim(), b = String(p.ort || '').trim();
-      const faehrt = ueber(fahrt, vorEnde - 1, p._s + 1).length > 0;
-      const wechsel = !!(a && b && a.toLowerCase() !== b.toLowerCase() && vorKat !== 'Fahrt' && p._kat !== 'Fahrt' && !faehrt);
-      if (p._s - vorEnde >= 15) luecke(p, vorEnde, p._s, wechsel, a, b);
-      else if (wechsel) p._hinweis = `Ortswechsel von ${a} – Fahrt einplanen?`;
+      const wechsel = !!(a && b && a.toLowerCase() !== b.toLowerCase() && vorKat !== 'Fahrt' && p._kat !== 'Fahrt');
+      uebergang(p, vorEnde, p._s, wechsel, a, b);
     }
     if (vorEnde == null || p._e > vorEnde) { vorEnde = p._e; vorOrt = p.ort || vorOrt; vorKat = p._kat; }
   });
@@ -1501,15 +1519,8 @@ function tagAufbereiten(items, startMin, startOrt, nr) {
   const danach = extra.filter(x => vorEnde == null || x._e > vorEnde);
   if (danach.length) {
     const von = vorEnde != null ? vorEnde : Math.min(...danach.map(x => x._s));
-    const bis = Math.max(...danach.map(x => x._e));
-    if (bis - von >= 15) luecke(null, von, bis, false, String(vorOrt || '').trim(), '');
+    uebergang(null, von, Math.max(...danach.map(x => x._e)), false, String(vorOrt || '').trim(), '');
   }
-  luecken.forEach(l => {
-    l.fahrt = ueber(fahrt, l.von, l.bis);
-    l.drinks = getraenke(l.von, l.bis);
-    const f = l.fahrt.find(x => x.ort);
-    if (f && !l.ortB) l.ortB = String(f.ort).trim();
-  });
   return { haupt: haupt, fahrt: fahrt, neben: neben, luecken: luecken, konflikte: konflikte };
 }
 
@@ -1929,7 +1940,8 @@ function timelineHtml(tag, j, nr, startMin, startOrt) {
 /** Wie eine Lücke aussieht: Bus bei Fahrt, Cocktail bei Getränken, beides wenn beides. */
 function lueckeArt(l) {
   const art = l.p ? (l.p.davor || '') : '';
-  const dauer = dauerText(l.bis - l.von);
+  const minuten = Math.max(0, l.bis - l.von);
+  const dauer = dauerText(minuten);
   const bus = (l.fahrt && l.fahrt.length > 0) || art === 'Fahrt';
   const drink = l.drinks && l.drinks.length > 0;
   const route = l.ortA && l.ortB && l.ortA.toLowerCase() !== l.ortB.toLowerCase() ? ` · ${esc(l.ortA)} → ${esc(l.ortB)}` : '';
@@ -1937,7 +1949,9 @@ function lueckeArt(l) {
     const teile = [];
     if (bus) teile.push('Fahrt');
     if (drink) teile.push(bus ? 'Getränke' : esc(l.drinks.map(n => n.titel).join(', ')));
-    return { cls: bus ? 'art-fahrt' : 'art-drink', inhalt: `${bus ? BUS : ''}${drink ? COCKTAIL : ''}${teile.join(' + ')} · ${dauer}${bus ? route : ''}` };
+    const text = teile.join(' + ') + (minuten ? ' · ' + dauer : '') + (bus ? route : '');
+    return { gross: true, cls: (bus ? 'art-fahrt' : 'art-drink') + ' verbindung',
+             inhalt: `<span class="lk-icons">${bus ? BUS : ''}${drink ? COCKTAIL : ''}</span><span class="lk-text">${text}</span>` };
   }
   if (art === 'Pause') return { cls: 'art-pause', inhalt: `${ico('cup', 's')}Pause · ${dauer}` };
   if (art === 'Freie Zeit') return { cls: 'art-frei', inhalt: `Freie Zeit · ${dauer}` };
@@ -1948,10 +1962,13 @@ function lueckeDaten(l) {
   return `data-act="luecke" data-id="${l.p ? esc(l.p.id) : ''}" data-von="${l.von}" data-bis="${l.bis}" data-tag="${l.tag}"
     data-orta="${esc(l.ortA || '')}" data-ortb="${esc(l.ortB || '')}" aria-label="Zeit ${zuUhr(l.von)} bis ${zuUhr(l.bis)} – Fahrt oder Getränke eintragen"`;
 }
+/** Zwischenstück im Zeitplan – mittig zwischen den beiden Punkten, mindestens so hoch, dass Bus/Cocktail gut sichtbar sind. */
 function lueckeHtml(l, vonH) {
   const a = lueckeArt(l);
-  const top = (l.von - vonH * 60) / 60 * PX_H, h = (l.bis - l.von) / 60 * PX_H;
-  return `<button type="button" class="tl-luecke ${a.cls}" ${lueckeDaten(l)} style="top:${top}px;height:${h}px"><span class="luecke-pill">${a.inhalt}</span></button>`;
+  const echt = (l.bis - l.von) / 60 * PX_H;
+  const hoch = Math.max(echt, a.gross ? 44 : 24);
+  const top = ((l.von + l.bis) / 2 - vonH * 60) / 60 * PX_H - hoch / 2;
+  return `<button type="button" class="tl-luecke ${a.cls}" ${lueckeDaten(l)} style="top:${top}px;height:${hoch}px"><span class="luecke-pill">${a.inhalt}</span></button>`;
 }
 
 function tlBlock(p, vonH) {
@@ -1968,12 +1985,10 @@ function tlBlock(p, vonH) {
     : zuUhr(p._s) + '–' + zuUhr(p._e);
   const ort = p.ort ? (p._kat === 'Fahrt' ? '→ ' : '') + p.ort : '';
   const id = String(p.id);
-  const icons = !frei && p._spalte === 'haupt' ? (p._fahrt ? BUS : '') + (p._drink ? COCKTAIL : '') : '';
   const cls = ['tl-block', frei ? 'frei' : '', p._idee ? 'idee' : '', wartend.has(id) ? 'wartet' : '', fehlIds.has(id) ? 'fehl' : '',
-               p._konflikt ? 'konflikt' : '', !frei && h < 40 ? 'kurz' : '', icons ? 'mit-icons' : ''].filter(Boolean).join(' ');
+               p._konflikt ? 'konflikt' : '', !frei && h < 40 ? 'kurz' : ''].filter(Boolean).join(' ');
   return `<div class="${cls}" data-act="abl-edit" data-id="${esc(id)}" data-dur="${p._dur}" data-s="${p._s == null ? '' : p._s}" style="${style}"
       title="${esc(p.titel)}" role="button" tabindex="0" aria-label="${esc(p.titel)}, ${esc(zeit)}">
-    ${icons ? `<span class="tl-icons" title="${p._fahrt ? 'Fahrt läuft' : ''}${p._fahrt && p._drink ? ' · ' : ''}${p._drink ? 'Getränke vorbereitet' : ''}">${icons}</span>` : ''}
     <span class="tl-zeit"><span class="tl-von-bis">${esc(zeit)}</span><span class="tl-tagname">${p._kat ? ' · ' + esc(p._kat) : ''}</span></span>
     <b>${esc(p.titel)}</b>
     ${ort ? `<span class="tl-ort">${esc(ort)}</span>` : ''}
@@ -2019,7 +2034,6 @@ function listeTagHtml(tag, j, nr, startMin, startOrt) {
     const meta = [katHtml(p._kat)];
     if (p._spalte === 'neben') meta.push('<span>begleitend</span>');
     if (p._spalte === 'fahrt') meta.push(`<span>${busSvg(true)}unterwegs</span>`);
-    if (p._spalte === 'haupt' && (p._fahrt || p._drink)) meta.push(`<span>${p._fahrt ? BUS : ''}${p._drink ? COCKTAIL : ''}</span>`);
     meta.push(`<span>${esc(dauerText(p._dur))}</span>`);
     if (p.ort) meta.push(`<a href="${esc(kartenLink(p.ort))}" target="_blank" rel="noopener noreferrer">${ico('pin', 's')}${esc(p.ort)}</a>`);
     const st = statusHtml(id);
@@ -2906,15 +2920,20 @@ const dlgLk = $('#dlg-luecke');
 let lueckeZiel = null;
 function oeffneLuecke(ds) {
   const z = lueckeZiel = { id: ds.id || '', von: +ds.von, bis: +ds.bis, tag: +ds.tag || 1, ortA: ds.orta || '', ortB: ds.ortb || '' };
-  $('#lk-zeit').textContent = `${zuUhr(z.von)} – ${zuUhr(z.bis)} · ${dauerText(z.bis - z.von)}`;
+  $('#lk-zeit').textContent = z.bis > z.von ? `${zuUhr(z.von)} – ${zuUhr(z.bis)} · ${dauerText(z.bis - z.von)}` : `um ${zuUhr(z.von)}`;
   const d = sicht();
-  // Gibt es in dieser Zeit schon eine Fahrt bzw. Getränke? Dann „bearbeiten“ statt neu anlegen.
-  const drin = ablaufPunkte(d).filter(p => p._s != null && p._tag === z.tag && p._s < z.bis && p._e > z.von);
+  // Gibt es hier schon eine Fahrt bzw. Getränke? Dann „bearbeiten“ statt neu anlegen.
+  const drin = ablaufPunkte(d).filter(p => p._s != null && p._tag === z.tag &&
+    (z.bis > z.von ? (p._s < z.bis && p._e > z.von) : (p._s <= z.von && p._e >= z.von)));
   const f = drin.find(p => p._spalte === 'fahrt'), g = drin.find(p => p._spalte === 'neben' && p._kat === 'Getränke');
   z.fahrtId = f ? String(f.id) : '';
   z.drinkId = g ? String(g.id) : '';
   $('#lk-fahrt span').textContent = f ? 'Fahrt bearbeiten' : 'Fahrt eintragen';
   $('#lk-drink span').textContent = g ? 'Getränke bearbeiten' : 'Getränke dazu';
+  // Direkt aneinander anschließende Punkte: kein Platz für einen neuen Eintrag, nur Vorhandenes bearbeiten
+  const zuKurz = z.bis - z.von < 15;
+  $('#lk-fahrt').hidden = zuKurz && !f;
+  $('#lk-drink').hidden = zuKurz && !g;
   $('#lk-fahrt').classList.toggle('aktiv', !!f);
   $('#lk-drink').classList.toggle('aktiv', !!g);
   const a = z.id ? d.ablauf.find(x => String(x.id) === z.id) : null;
