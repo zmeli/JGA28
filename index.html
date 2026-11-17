@@ -320,11 +320,15 @@ details.zusatz[open]>summary{margin-bottom:10px}
 .tl-spalte.fahrt{border-radius:var(--r-sm);background:repeating-linear-gradient(135deg,transparent 0 9px,rgb(236 123 162 / .09) 9px 10px)}
 /* Verbindung zwischen zwei Punkten: Bus = Fahrt, Cocktail = Getränke vorbereitet */
 .tl-luecke.verbindung{z-index:3}
-.verbindung .luecke-pill{height:auto;min-height:36px;padding:4px 12px 4px 8px;gap:8px;border:1px solid #F3C9D8;box-shadow:0 2px 8px rgb(31 27 22 / .07);font-size:11.5px}
-.verbindung.art-drink .luecke-pill{border-color:#E2D3EC}
-.lk-icons{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto}
-.verbindung .bus{width:42px;height:26px}
-.verbindung .cocktail{width:26px;height:26px}
+.tl-luecke.grenze{justify-content:flex-end;padding-right:8px}
+.tl-luecke.grenze::before{display:none}
+/* gepunktete Linie von Block zu Block, große Symbole in der Mitte, kurze Notiz daneben */
+.tl-luecke.verbindung::before{border-left:2px dotted #C9BFB2}
+.tl-luecke.verbindung .luecke-pill{height:auto;min-height:40px;padding:2px 8px;gap:8px;border:0;background:var(--surface);box-shadow:none;font-size:11.5px;color:var(--ink-2)}
+.tl-luecke.grenze .luecke-pill{border:1px solid var(--line);box-shadow:var(--shadow)}
+.lk-icons{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto}
+.verbindung .bus{width:48px;height:30px}
+.verbindung .cocktail{width:30px;height:30px}
 .lk-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ls-luecke.verbindung{padding:6px 12px 6px 8px;gap:8px}
 .ls-luecke.verbindung .bus{width:36px;height:22px}
@@ -545,6 +549,7 @@ details.zusatz[open]>summary{margin-bottom:10px}
             <button type="button" data-menu="name">Namen ändern</button>
             <button type="button" data-menu="titel">Titel ändern</button>
             <button type="button" data-menu="qr">QR-Code zu dieser Seite</button>
+            <button type="button" data-menu="diagnose">Diagnose kopieren</button>
             <button type="button" data-menu="abmelden">Abmelden</button>
           </div>
         </details>
@@ -787,7 +792,7 @@ details.zusatz[open]>summary{margin-bottom:10px}
 
 /* ═══════════ Konfiguration ═══════════ */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDhXLQLLR9Ye_hazbxMIq-7pEPQj2Y_fdSrgttcHEXkov6rNjI1Ov2pDNvKH_a4Klj/exec'
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyY3KXsKFQXMHzGfmOa7pT7_DtUU7YH2auOWQfCO3-9J3Bx3dtQGX0639Xanw_cSHXAxw/exec'
 // Eine gemeinsame Liste für Programm-Kategorien und Ablauf-Tags.
 // „spalte": in welcher Ablauf-Spalte die Kategorie standardmäßig landet (haupt | fahrt | neben).
 const KATEGORIEN = [
@@ -803,6 +808,7 @@ const KATEGORIEN = [
   { name: 'Deko',         farbe: '#C99AB0', spalte: 'neben' },
   { name: 'Einkauf',      farbe: '#A89270' }
 ];
+const VERSION = '2026-11-17 · Verbindungen 5';   // steht im ⋯-Menü – so sieht man, welche Datei läuft
 const KAT_ALIAS = { autofahrt: 'Fahrt' };
 const KAT_SONST = '#A89F94';
 const STATUS = ['Idee', 'Fix gebucht', 'Abgelehnt'];
@@ -1487,13 +1493,15 @@ function tagAufbereiten(items, startMin, startOrt, nr) {
   // Übergänge zwischen zwei Punkten: freie Lücken (≥ 15 min) und jede Stelle, an der eine Fahrt
   // oder Getränke geplant sind – auch wenn zwei Punkte direkt aneinander anschließen.
   const luecken = [];
+  // Direkt aneinander anschließende Punkte: nur was über die Grenze läuft (oder genau dort ankommt) zählt
   const imFenster = (liste, von, bis) => bis > von
     ? liste.filter(x => x._s < bis && x._e > von)
-    : liste.filter(x => x._s <= von && x._e >= von);
-  const uebergang = (p, von, bis, wechsel, a, b) => {
+    : liste.filter(x => x._s < von && x._e >= von);
+  const uebergang = (p, von, bis, wechsel, a, b, mitVorgaenger) => {
     const l = { p: p, tag: nr, von: von, bis: bis, wechsel: wechsel, ortA: a, ortB: b };
-    l.fahrt = imFenster(fahrt, von, bis);
-    l.drinks = imFenster(neben, von, bis).filter(n => n._kat === 'Getränke');
+    const offenLeer = bis <= von && !mitVorgaenger;          // Start = erster Punkt: nichts „dazwischen“
+    l.fahrt = offenLeer ? [] : imFenster(fahrt, von, bis);
+    l.drinks = offenLeer ? [] : imFenster(neben, von, bis).filter(n => n._kat === 'Getränke');
     const f = l.fahrt.find(x => x.ort);
     if (f && !l.ortB) l.ortB = String(f.ort).trim();
     if (l.fahrt.length) l.wechsel = false;
@@ -1501,17 +1509,19 @@ function tagAufbereiten(items, startMin, startOrt, nr) {
     else if (l.wechsel && p) p._hinweis = `Ortswechsel von ${a} – Fahrt einplanen?`;
   };
   const extra = fahrt.concat(neben);
-  let vorEnde = startMin, vorOrt = startOrt || '', vorKat = '';
+  // Startzeit nur nutzen, wenn sie vor dem ersten Eintrag liegt (z. B. Tippfehler „01:00“ statt „11:00“ ignorieren)
+  const startGilt = startMin != null && (!haupt.length || startMin <= haupt[0]._s);
+  let vorEnde = startGilt ? startMin : null, vorOrt = startGilt ? (startOrt || '') : '', vorKat = '';
   haupt.forEach((p, i) => {
     // Vor dem ersten Eintrag (ohne Startzeit): Fahrt/Getränke davor sichtbar machen
     if (i === 0 && vorEnde == null) {
       const davor = extra.filter(x => x._s < p._s);
-      if (davor.length) uebergang(p, Math.min(...davor.map(x => x._s)), p._s, false, '', String(p.ort || '').trim());
+      if (davor.length) uebergang(p, Math.min(...davor.map(x => x._s)), p._s, false, '', String(p.ort || '').trim(), true);
     }
     if (vorEnde != null && p._s >= vorEnde) {
       const a = String(vorOrt || '').trim(), b = String(p.ort || '').trim();
       const wechsel = !!(a && b && a.toLowerCase() !== b.toLowerCase() && vorKat !== 'Fahrt' && p._kat !== 'Fahrt');
-      uebergang(p, vorEnde, p._s, wechsel, a, b);
+      uebergang(p, vorEnde, p._s, wechsel, a, b, i > 0);
     }
     if (vorEnde == null || p._e > vorEnde) { vorEnde = p._e; vorOrt = p.ort || vorOrt; vorKat = p._kat; }
   });
@@ -1519,9 +1529,10 @@ function tagAufbereiten(items, startMin, startOrt, nr) {
   const danach = extra.filter(x => vorEnde == null || x._e > vorEnde);
   if (danach.length) {
     const von = vorEnde != null ? vorEnde : Math.min(...danach.map(x => x._s));
-    uebergang(null, von, Math.max(...danach.map(x => x._e)), false, String(vorOrt || '').trim(), '');
+    uebergang(null, von, Math.max(...danach.map(x => x._e)), false, String(vorOrt || '').trim(), '', true);
   }
-  return { haupt: haupt, fahrt: fahrt, neben: neben, luecken: luecken, konflikte: konflikte };
+  const startSpaet = startMin != null && haupt.length && startMin > haupt[0]._s;
+  return { haupt: haupt, fahrt: fahrt, neben: neben, luecken: luecken, konflikte: konflikte, startSpaet: startSpaet };
 }
 
 /** Überlappende Einträge nebeneinander in Spuren legen. */
@@ -1596,7 +1607,7 @@ function render() {
   wartend = new Set(pending.map(o => String(o.id)));
   fehlIds = new Set(fehlgeschlagen.map(o => String(o.id)));
   syncAnzeigen();
-  $('#menu-name').textContent = 'Angemeldet als ' + name;
+  $('#menu-name').textContent = 'Angemeldet als ' + name + ' · Version ' + VERSION;
   if (!server) { view.innerHTML = '<p class="leer">Lädt …</p>'; return; }
   const d = sicht();
   const titel = d.einstellungen.titel || 'JGA';
@@ -1871,7 +1882,7 @@ function viewAblauf(d) {
     const datum = tagDatum(j, nr);
     html += `<div class="tag-kopf">
       <div><p class="eyebrow">Tag ${nr}${j.tage > 1 ? ' von ' + j.tage : ''}</p><h3>${datum ? esc(datumLang(datum)) : 'Der große Tag'}</h3></div>
-      <span>${tag.konflikte ? `<span class="pill warn">${tag.konflikte} Einträge überschneiden sich</span> ` : ''}<span class="klein">${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'}</span></span>
+      <span>${tag.startSpaet ? `<button type="button" class="pill warn" data-act="jga-edit" title="Startzeit ändern">Startzeit ${esc(j.start)} liegt nach dem ersten Eintrag – prüfen</button> ` : ''}${tag.konflikte ? `<span class="pill warn">${tag.konflikte} Einträge überschneiden sich</span> ` : ''}<span class="klein">${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'}</span></span>
     </div>`;
     html += ansicht === 'liste'
       ? listeTagHtml(tag, j, nr, startMin, startOrt)
@@ -1915,7 +1926,7 @@ function timelineHtml(tag, j, nr, startMin, startOrt) {
     if (h < bisH) linien += `<div class="tl-linie halb" style="top:${y + PX_H / 2}px"></div>`;
   }
   const yPos = m => (m - vonH * 60) / 60 * PX_H;
-  const start = startMin != null
+  const start = startMin != null && startMin >= vonH * 60 && startMin <= bisH * 60
     ? `<div class="tl-start" style="top:${yPos(startMin)}px"><span>Start ${zuUhr(startMin)}${startOrt ? ' · ' + esc(startOrt) : ''}</span></div>` : '';
   const jetzt = jm != null && jm >= vonH * 60 && jm <= bisH * 60
     ? `<div class="tl-jetzt" style="top:${yPos(jm)}px"><span>${zuUhr(jm)}</span></div>` : '';
@@ -1966,9 +1977,10 @@ function lueckeDaten(l) {
 function lueckeHtml(l, vonH) {
   const a = lueckeArt(l);
   const echt = (l.bis - l.von) / 60 * PX_H;
-  const hoch = Math.max(echt, a.gross ? 44 : 24);
+  const hoch = Math.max(echt, a.gross ? 48 : 24);
   const top = ((l.von + l.bis) / 2 - vonH * 60) / 60 * PX_H - hoch / 2;
-  return `<button type="button" class="tl-luecke ${a.cls}" ${lueckeDaten(l)} style="top:${top}px;height:${hoch}px"><span class="luecke-pill">${a.inhalt}</span></button>`;
+  const grenze = a.gross && l.bis - l.von < 15 ? ' grenze' : '';     // direkt aneinander: rechts, damit die Uhrzeit lesbar bleibt
+  return `<button type="button" class="tl-luecke ${a.cls}${grenze}" ${lueckeDaten(l)} style="top:${top}px;height:${hoch}px"><span class="luecke-pill">${a.inhalt}</span></button>`;
 }
 
 function tlBlock(p, vonH) {
@@ -2450,6 +2462,10 @@ menu.addEventListener('click', async ev => {
     if (t != null) schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'titel', wert: t.trim() });
   } else if (b.dataset.menu === 'qr') {
     zeigeQr(location.hash.replace(/^#/, '') || 'programm', document.title);
+  } else if (b.dataset.menu === 'diagnose') {
+    const text = diagnose();
+    try { await navigator.clipboard.writeText(text); toast('Diagnose kopiert – bitte im Chat einfügen'); }
+    catch (e) { await frage({ titel: 'Diagnose', text: 'Kopieren ging nicht automatisch. Bitte das Feld markieren und kopieren.', ok: 'Fertig', eingabe: { label: 'Diagnose', wert: text, max: 100000 } }); }
   } else if (b.dataset.menu === 'abmelden') {
     if (pending.length) {
       const ok = await frage({ titel: 'Noch nicht gespeichert', text: 'Einige Änderungen werden gerade noch gespeichert und gehen beim Abmelden verloren.', ok: 'Trotzdem abmelden', gefahr: true });
@@ -2458,6 +2474,25 @@ menu.addEventListener('click', async ev => {
     abmelden('');
   }
 });
+
+/** Kompakter Bericht über den Ablauf (ohne Passwort) – zum Einfügen in den Chat bei Problemen. */
+function diagnose() {
+  const d = sicht(), j = jga(d);
+  const tage = [];
+  for (let nr = 1; nr <= j.tage; nr++) {
+    const items = ablaufPunkte(d).filter(p => p._s != null && p._tag === nr);
+    const t = tagAufbereiten(items, nr === 1 ? j.startMin : null, nr === 1 ? j.ort : '', nr);
+    tage.push({ tag: nr, haupt: t.haupt.map(p => p.titel), fahrt: t.fahrt.map(p => p.titel), begleitend: t.neben.map(p => p.titel + ' (' + p._kat + ')'),
+      uebergaenge: t.luecken.map(l => zuUhr(l.von) + '–' + zuUhr(l.bis) + ' Fahrt:' + l.fahrt.length + ' Getränke:' + l.drinks.length) });
+  }
+  return JSON.stringify({
+    version: VERSION, seite: location.href.split('#')[0].slice(-40), ansicht: aktuelleAnsicht(d),
+    jga: { datum: j.datum, bis: j.bis, tage: j.tage, start: j.start, ort: j.ort },
+    ablauf: d.ablauf.map(a => ({ titel: a.titel, kategorie: a.kategorie, tag: a.tag, tagNr: a.tagNr, spalte: a.spalte,
+      uhrzeit: a.uhrzeit, dauer: a.dauer, davor: a.davor, verknuepft: a.programmId ? 'ja' : '' })),
+    tage: tage
+  });
+}
 
 async function gruppeSetzen(d) {
   const v = await frage({ eyebrow: 'Kosten', titel: 'Gruppengröße', text: 'Wie viele Personen seid ihr insgesamt, inklusive Braut?', ok: 'Speichern',
