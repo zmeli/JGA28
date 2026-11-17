@@ -11,18 +11,18 @@
 <link rel="preconnect" href="https://script.google.com" crossorigin>
 <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <style>
-/* Hell & sonnig: Creme, Sonnenblumengelb, freundliches Pink */
+/* Hell, ruhig, minimalistisch */
 :root{
-  --bg:#FFF9E8; --card:#FFFFFF; --ink:#3B2A1F; --soft:#7A6656; --line:#F2E2B8;
+  --bg:#FFFCF5; --card:#FFFFFF; --ink:#33291F; --soft:#7A6E62; --line:#EFE7D6;
   --primary:#D2386E; --primary-dark:#A82A57; --primary-ink:#FFFFFF; --primary-soft:#FFE4EE;
   --sun:#FFCB2E; --sun-soft:#FFF1B8; --leaf:#5BAA4F;
   --ok:#2F8A3E; --ok-soft:#E3F5DF; --warn:#A35F00; --warn-soft:#FFF0CC; --danger:#D23F3F;
-  --radius:18px;
-  --schatten:0 3px 0 #F2E2B8;
+  --radius:14px;
+  --schatten:none;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:radial-gradient(900px 380px at 50% -120px,#FFE9A3 0%,rgb(255 233 163 / 0) 70%) no-repeat,var(--bg);color:var(--ink);font:16px/1.45 ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
 a{color:var(--primary)}
 h1,h2,h3{line-height:1.2;margin:0}
@@ -38,8 +38,7 @@ label.check{display:flex;align-items:center;gap:.45rem}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.55rem 1rem;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;font-weight:600;white-space:nowrap}
 .btn:hover{border-color:var(--primary)}
 .btn:disabled{opacity:.6;cursor:default}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink);box-shadow:0 3px 0 var(--primary-dark)}
-.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
 .btn.small{padding:.35rem .8rem;font-size:.875rem}
 .btn.gefahr{color:var(--danger)}
 .btn.aktiv{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
@@ -68,7 +67,7 @@ label.check{display:flex;align-items:center;gap:.45rem}
 .menu-name{padding:.4rem .7rem;font-size:.85rem;color:var(--soft)}
 main{max-width:860px;margin:0 auto;padding:16px 16px 24px}
 
-.budget{position:relative;overflow:hidden;background:linear-gradient(135deg,#FFE27A 0%,#FFD3E0 100%);color:var(--ink);border-radius:var(--radius);padding:1rem 6.5rem 1rem 1.1rem;margin-bottom:1rem;box-shadow:0 3px 0 #EBC66A}
+.budget{background:var(--sun-soft);color:var(--ink);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem}
 .budget .gross{font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--primary-dark)}
 .budget-neben{font-size:.92rem;margin-top:.15rem;opacity:.92}
 .toolbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1rem}
@@ -78,7 +77,7 @@ main{max-width:860px;margin:0 auto;padding:16px 16px 24px}
 .karte.st-fix{border-left:5px solid var(--ok)}
 .karte.st-nein{opacity:.55}
 .karte.wartet{opacity:.55}
-.score{flex:0 0 58px;height:58px;border-radius:999px;display:grid;place-content:center;text-align:center;background:var(--sun-soft);border:2px solid var(--sun);color:var(--primary-dark);font-weight:800;font-size:1.25rem;line-height:1.05}
+.score{flex:0 0 58px;height:58px;border-radius:999px;display:grid;place-content:center;text-align:center;background:var(--sun-soft);color:var(--ink);font-weight:800;font-size:1.25rem;line-height:1.05}
 .score small{display:block;font-size:.62rem;font-weight:600;color:var(--soft)}
 .inhalt{flex:1;min-width:0}
 .karte h3{font-size:1.1rem;margin-bottom:.4rem;overflow-wrap:anywhere}
@@ -147,142 +146,83 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
 #toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 32px);background:var(--ink);color:var(--bg);padding:.7rem 1rem;border-radius:12px;font-size:.92rem;z-index:50;box-shadow:0 8px 24px rgb(0 0 0 / .25)}
 #toast.fehler{background:var(--danger);color:#fff}
 
-/* ── Sonnenblumen & kleine Animationen ── */
+/* ── Illustration ── */
 .kopf-blume{flex:0 0 auto;display:block}
-.wippen{transform-origin:50% 50%;animation:wippen 4s ease-in-out infinite alternate}
-@keyframes wippen{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
-.wackel{transform-origin:50% 100%;animation:wackeln 3.2s ease-in-out infinite alternate}
-@keyframes wackeln{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
-.budget .deko-blume{position:absolute;right:-14px;bottom:-26px}
 .leer svg{display:block;margin:0 auto .6rem}
-.wiese{display:flex;justify-content:center;align-items:flex-end;height:170px;overflow:hidden;pointer-events:none;background:linear-gradient(to top,#8CCB5E 0 14px,transparent 14px)}
-.wiese svg{flex:0 0 auto;margin:0 -5px}
-.wiese svg:nth-child(2n){animation-duration:3.8s;animation-delay:-1.2s}
-.wiese svg:nth-child(3n){animation-duration:2.7s;animation-delay:-.6s}
 
-/* ── Timeline ── */
-.tl-hinweis{font-size:.85rem;color:var(--soft);margin:-.3rem 0 1rem}
-.tl-tag{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:.9rem .8rem 1.2rem;margin-bottom:1rem;box-shadow:var(--schatten)}
-.tl-kopf{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.tl-kopf h3{flex:1;min-width:0;font-size:1.05rem;color:var(--primary)}
-.tl-raster{position:relative;margin-top:.8rem}
-.tl-linie{position:absolute;left:3rem;right:0;border-top:1px solid #F3E7C4}
-.tl-linie.halb{border-top:1px dashed #F8F0DA}
-.tl-std{position:absolute;left:0;width:2.5rem;text-align:right;font-size:.72rem;font-weight:700;color:var(--soft);transform:translateY(-50%);font-variant-numeric:tabular-nums}
+/* ── JGA-Info: wann & wo ── */
+.jga-info{display:flex;align-items:center;gap:1rem;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem}
+.jga-text{flex:1;min-width:0;display:grid;gap:.15rem}
+.jga-datum{font-size:1.15rem;font-weight:800}
+.jga-info svg{flex:0 0 auto}
+
+/* ── Tagesablauf ── */
+.tl-tag{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem .8rem 1rem;margin-bottom:1rem}
+.tl-raster{position:relative}
+.tl-linie{position:absolute;left:3rem;right:0;border-top:1px solid #F1EBDD}
+.tl-linie.halb{border-top:1px dashed #F6F1E6}
+.tl-std{position:absolute;left:0;width:2.5rem;text-align:right;font-size:.72rem;font-weight:600;color:var(--soft);transform:translateY(-50%);font-variant-numeric:tabular-nums}
 .tl-spur{position:absolute;left:3.3rem;right:0;top:0;bottom:0}
-.tl-block{position:absolute;border-radius:12px;padding:.25rem .45rem .25rem 1.6rem;overflow:hidden;background:var(--kat,#F5F0E6);border:1.5px solid rgb(59 42 31 / .2);box-shadow:0 2px 0 rgb(59 42 31 / .12);cursor:pointer;font-size:.82rem;line-height:1.25;-webkit-user-select:none;user-select:none;z-index:2}
-.tl-block:hover{border-color:var(--primary)}
-.tl-block.idee{border-style:dashed;border-color:#C7A35A}
+.tl-start{position:absolute;left:3rem;right:0;border-top:2px solid var(--leaf);z-index:3;pointer-events:none}
+.tl-start span{position:absolute;right:0;bottom:3px;font-size:.72rem;font-weight:700;color:var(--leaf);white-space:nowrap}
+.tl-block{position:absolute;border-radius:10px;padding:.3rem .5rem .3rem 1.05rem;overflow:hidden;background:var(--card);border:1px solid var(--line);cursor:pointer;font-size:.82rem;line-height:1.25;-webkit-user-select:none;user-select:none;z-index:2}
+.tl-block:hover{border-color:var(--tag)}
 .tl-block.wartet{opacity:.55}
-.tl-block.frei{position:relative;min-height:3.3rem;margin-bottom:.5rem}
+.tl-block.frei{position:relative;min-height:3rem;margin-bottom:.5rem}
 .tl-block b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem}
-.tl-zeit{display:block;font-size:.72rem;font-weight:800;color:var(--primary-dark);font-variant-numeric:tabular-nums}
-.tl-ort,.tl-anreise{display:block;font-size:.72rem;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tl-anreise.knapp{color:var(--warn);font-weight:700}
-.tl-griff{position:absolute;left:0;top:0;bottom:0;width:1.35rem;display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgb(59 42 31 / .5);background:rgb(255 255 255 / .4);cursor:grab;touch-action:none}
+.tl-griff{position:absolute;left:0;top:0;bottom:0;width:.6rem;background:var(--tag);cursor:grab;touch-action:none}
+.tl-block.idee .tl-griff{background:repeating-linear-gradient(180deg,var(--tag) 0 6px,transparent 6px 10px)}
+.tl-zeit,.tl-ort{display:block;font-size:.74rem;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.tl-tagname{color:var(--tag);font-weight:700}
+.tl-ort-hinweis{display:block;font-size:.72rem;color:var(--warn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-resize{position:absolute;left:.6rem;right:0;bottom:0;height:12px;cursor:ns-resize;touch-action:none}
+.tl-resize::after{content:"";position:absolute;left:50%;bottom:3px;width:22px;margin-left:-11px;border-top:2px solid var(--line);border-radius:2px}
+.tl-block:hover .tl-resize::after{border-color:var(--tag)}
 .tl-block.zieht{opacity:.3}
-.tl-geist{position:fixed!important;left:0!important;top:0!important;margin:0!important;z-index:60;pointer-events:none;opacity:.95;border-color:var(--primary)!important;box-shadow:0 12px 28px rgb(59 42 31 / .25)}
+.tl-geist{position:fixed!important;left:0!important;top:0!important;margin:0!important;z-index:60;pointer-events:none;border-color:var(--tag)!important;box-shadow:0 8px 20px rgb(0 0 0 / .12)}
 .am-ziehen,.am-ziehen *{cursor:grabbing!important}
-.tl-marker{position:absolute;left:0;right:0;border-top:3px solid var(--primary);z-index:5;pointer-events:none}
-.tl-marker span{position:absolute;left:0;top:-.8rem;background:var(--primary);color:#fff;font-size:.74rem;font-weight:800;padding:.1rem .5rem;border-radius:999px;white-space:nowrap}
-.tl-ablage{border:2px dashed #E9CF8E;border-radius:var(--radius);padding:.8rem;margin-bottom:1rem;background:rgb(255 255 255 / .6)}
-.tl-ablage.drop-ok{border-color:var(--primary);background:var(--primary-soft)}
-.tl-ablage h3{font-size:1rem;margin-bottom:.6rem}
-/* Weg zwischen zwei Orten: kleiner Bus fährt über eine gestrichelte Straße */
-.tl-weg{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:flex-end;pointer-events:none;z-index:1}
-.tl-weg.pause{justify-content:center;gap:.35rem}
-.weg-strasse{position:absolute;left:0;right:0;top:50%;border-top:3px dashed #E5C98A}
-.bus-bahn{position:absolute;left:0;right:46px;top:50%;margin-top:-23px;height:28px}
-.bus-fahrt{width:100%;height:100%;animation:fahren 7s linear infinite}
-.bus-fahrt svg{display:block}
-@keyframes fahren{from{transform:translateX(0)}to{transform:translateX(100%)}}
-.bus-huepf{animation:huepfen .45s ease-in-out infinite alternate}
-@keyframes huepfen{from{transform:translateY(0)}to{transform:translateY(-2px)}}
-.weg-text{position:relative;z-index:1;max-width:70%;font-size:.72rem;font-weight:700;color:var(--soft);background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:.1rem .55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* Bewegung reduzieren: Effekte aus, Zeiten bleiben */
-@media (prefers-reduced-motion: reduce){
-  .wippen,.wackel,.bus-fahrt,.bus-huepf{animation:none!important}
-}
+.am-dehnen,.am-dehnen *{cursor:ns-resize!important}
+.tl-marker{position:absolute;left:0;right:0;border-top:2px solid var(--primary);z-index:5;pointer-events:none}
+.tl-marker span{position:absolute;left:0;top:-.75rem;background:var(--primary);color:#fff;font-size:.72rem;font-weight:700;padding:.05rem .45rem;border-radius:999px;white-space:nowrap}
+.tl-ablage{border:1px dashed var(--line);border-radius:var(--radius);padding:.8rem;margin-bottom:1rem}
+.tl-ablage h3{font-size:.9rem;font-weight:700;color:var(--soft);margin-bottom:.6rem}
+.vorrat{padding-right:6.5rem}
+.vorrat-btn{position:absolute;right:.45rem;top:50%;transform:translateY(-50%)}
+.tag-wahl{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:-.35rem}
+.tag-pill{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:.2rem .65rem;font-size:.8rem;cursor:pointer}
+.tag-pill::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--tag)}
+.tag-pill.aktiv{border-color:var(--tag);font-weight:700}
 </style>
 </head>
 <body>
 
-<!-- Grafiken (Comic-Stil), einmal definiert, überall per <use> wiederverwendet -->
+<!-- Illustration: lachende Sonnenblume aus flachen Formen, einmal definiert, per <use> wiederverwendet -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <path id="g-blatt" d="M0,-15 C9,-23 10,-37 0,-47 C-10,-37 -9,-23 0,-15Z" stroke="#5A3415" stroke-width="2.4" stroke-linejoin="round"/>
-
-    <!-- Sonnenblumen-Kopf mit Gesicht -->
     <symbol id="g-sb" viewBox="-50 -50 100 100">
-      <g fill="#F2A900">
-        <use href="#g-blatt" transform="rotate(11.25)"/><use href="#g-blatt" transform="rotate(33.75)"/>
-        <use href="#g-blatt" transform="rotate(56.25)"/><use href="#g-blatt" transform="rotate(78.75)"/>
-        <use href="#g-blatt" transform="rotate(101.25)"/><use href="#g-blatt" transform="rotate(123.75)"/>
-        <use href="#g-blatt" transform="rotate(146.25)"/><use href="#g-blatt" transform="rotate(168.75)"/>
-        <use href="#g-blatt" transform="rotate(191.25)"/><use href="#g-blatt" transform="rotate(213.75)"/>
-        <use href="#g-blatt" transform="rotate(236.25)"/><use href="#g-blatt" transform="rotate(258.75)"/>
-        <use href="#g-blatt" transform="rotate(281.25)"/><use href="#g-blatt" transform="rotate(303.75)"/>
-        <use href="#g-blatt" transform="rotate(326.25)"/><use href="#g-blatt" transform="rotate(348.75)"/>
+      <g fill="#F2A12E">
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(15)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(45)"/>
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(75)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(105)"/>
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(135)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(165)"/>
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(195)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(225)"/>
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(255)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(285)"/>
+        <ellipse cy="-32" rx="9" ry="16" transform="rotate(315)"/><ellipse cy="-32" rx="9" ry="16" transform="rotate(345)"/>
       </g>
-      <g fill="#FFCB2E">
-        <use href="#g-blatt"/><use href="#g-blatt" transform="rotate(22.5)"/>
-        <use href="#g-blatt" transform="rotate(45)"/><use href="#g-blatt" transform="rotate(67.5)"/>
-        <use href="#g-blatt" transform="rotate(90)"/><use href="#g-blatt" transform="rotate(112.5)"/>
-        <use href="#g-blatt" transform="rotate(135)"/><use href="#g-blatt" transform="rotate(157.5)"/>
-        <use href="#g-blatt" transform="rotate(180)"/><use href="#g-blatt" transform="rotate(202.5)"/>
-        <use href="#g-blatt" transform="rotate(225)"/><use href="#g-blatt" transform="rotate(247.5)"/>
-        <use href="#g-blatt" transform="rotate(270)"/><use href="#g-blatt" transform="rotate(292.5)"/>
-        <use href="#g-blatt" transform="rotate(315)"/><use href="#g-blatt" transform="rotate(337.5)"/>
+      <g fill="#FFC93C">
+        <ellipse cy="-31" rx="8.5" ry="15"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(30)"/>
+        <ellipse cy="-31" rx="8.5" ry="15" transform="rotate(60)"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(90)"/>
+        <ellipse cy="-31" rx="8.5" ry="15" transform="rotate(120)"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(150)"/>
+        <ellipse cy="-31" rx="8.5" ry="15" transform="rotate(180)"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(210)"/>
+        <ellipse cy="-31" rx="8.5" ry="15" transform="rotate(240)"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(270)"/>
+        <ellipse cy="-31" rx="8.5" ry="15" transform="rotate(300)"/><ellipse cy="-31" rx="8.5" ry="15" transform="rotate(330)"/>
       </g>
-      <circle r="19" fill="#8B5A2B" stroke="#5A3415" stroke-width="2.6"/>
-      <circle r="14" fill="#6E431D"/>
-      <g fill="#4A2A12">
-        <circle cx="15.5" cy="0" r="1.3"/><circle cx="11" cy="11" r="1.3"/><circle cx="0" cy="15.5" r="1.3"/><circle cx="-11" cy="11" r="1.3"/>
-        <circle cx="-15.5" cy="0" r="1.3"/><circle cx="-11" cy="-11" r="1.3"/><circle cx="0" cy="-15.5" r="1.3"/><circle cx="11" cy="-11" r="1.3"/>
-      </g>
-      <path d="M-12,-8 A14,14 0 0 1 -4,-15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-      <ellipse cx="-10.5" cy="3.5" rx="3" ry="1.9" fill="#FF8FA3" opacity=".9"/>
-      <ellipse cx="10.5" cy="3.5" rx="3" ry="1.9" fill="#FF8FA3" opacity=".9"/>
-      <ellipse cx="-6" cy="-2" rx="2.4" ry="3" fill="#2B1A0E"/>
-      <ellipse cx="6" cy="-2" rx="2.4" ry="3" fill="#2B1A0E"/>
-      <circle cx="-6.8" cy="-3.2" r=".9" fill="#fff"/><circle cx="5.2" cy="-3.2" r=".9" fill="#fff"/>
-      <path d="M-5,4 Q0,9.5 5,4" fill="none" stroke="#2B1A0E" stroke-width="1.8" stroke-linecap="round"/>
-    </symbol>
-
-    <!-- Sonnenblume mit Stiel und Blättern -->
-    <symbol id="g-stiel" viewBox="0 0 100 230">
-      <path d="M50,92 C44,135 58,175 50,230" fill="none" stroke="#2F6B2A" stroke-width="9" stroke-linecap="round"/>
-      <path d="M50,92 C44,135 58,175 50,230" fill="none" stroke="#6CC04A" stroke-width="5" stroke-linecap="round"/>
-      <path d="M49,150 C32,128 12,132 4,146 C18,160 36,162 49,150Z" fill="#6CC04A" stroke="#2F6B2A" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M48,150 C34,145 20,144 10,146" fill="none" stroke="#2F6B2A" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M52,185 C68,163 88,166 96,180 C82,194 64,196 52,185Z" fill="#6CC04A" stroke="#2F6B2A" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M53,185 C66,180 80,179 90,180" fill="none" stroke="#2F6B2A" stroke-width="1.6" stroke-linecap="round"/>
-      <use href="#g-sb" x="0" y="0" width="100" height="100"/>
-    </symbol>
-
-    <!-- Kleiner pinker Partybus -->
-    <symbol id="g-bus" viewBox="0 0 120 72">
-      <rect x="6" y="8" width="106" height="46" rx="13" fill="#FF8FB1" stroke="#3B2A1F" stroke-width="3"/>
-      <path d="M8,38 H110" stroke="#fff" stroke-width="5"/>
-      <rect x="16" y="16" width="18" height="15" rx="4" fill="#CFEFFF" stroke="#3B2A1F" stroke-width="2.5"/>
-      <rect x="40" y="16" width="18" height="15" rx="4" fill="#CFEFFF" stroke="#3B2A1F" stroke-width="2.5"/>
-      <rect x="64" y="16" width="18" height="15" rx="4" fill="#CFEFFF" stroke="#3B2A1F" stroke-width="2.5"/>
-      <path d="M88,16 H100 Q108,16 108,26 V31 H88Z" fill="#CFEFFF" stroke="#3B2A1F" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M50,41 c0,-3.5 4.5,-3.5 4.5,0 c0,-3.5 4.5,-3.5 4.5,0 c0,3 -4.5,6 -4.5,7 c0,-1 -4.5,-4 -4.5,-7Z" fill="#D2386E"/>
-      <circle cx="107" cy="45" r="3.2" fill="#FFE27A" stroke="#3B2A1F" stroke-width="1.5"/>
-      <circle cx="32" cy="56" r="10" fill="#3B2A1F"/><circle cx="32" cy="56" r="4" fill="#E8DCCB"/>
-      <circle cx="88" cy="56" r="10" fill="#3B2A1F"/><circle cx="88" cy="56" r="4" fill="#E8DCCB"/>
-    </symbol>
-
-    <!-- Cocktail für Pausen -->
-    <symbol id="g-cocktail" viewBox="0 0 60 72">
-      <path d="M26,24 L16,2" stroke="#5BAA4F" stroke-width="3.5" stroke-linecap="round"/>
-      <path d="M8,12 H52 L30,40Z" fill="#FFE4EE" stroke="#3B2A1F" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M15,18 H45 L30,35Z" fill="#FF7FA6"/>
-      <path d="M30,40 V62 M18,64 H42" stroke="#3B2A1F" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="47" cy="11" r="5" fill="#D2386E" stroke="#3B2A1F" stroke-width="2"/>
-      <path d="M47,6 Q49,1 54,1" fill="none" stroke="#2F6B2A" stroke-width="2" stroke-linecap="round"/>
+      <circle r="21" fill="#7A4B26"/>
+      <!-- lachendes Gesicht: geschlossene Augen, offener Mund -->
+      <path d="M-11,-4 Q-7.5,-9.5 -4,-4 M4,-4 Q7.5,-9.5 11,-4" fill="none" stroke="#FFE6B3" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M-8,3 H8 Q8,13 0,13 Q-8,13 -8,3Z" fill="#3E2312"/>
+      <path d="M-4.5,10.6 Q0,7.6 4.5,10.6 Q2.6,13 0,13 Q-2.6,13 -4.5,10.6Z" fill="#E8707A"/>
+      <circle cx="-13.5" cy="4" r="3" fill="#E8707A" opacity=".55"/>
+      <circle cx="13.5" cy="4" r="3" fill="#E8707A" opacity=".55"/>
     </symbol>
   </defs>
 </svg>
@@ -301,7 +241,7 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
 <div id="app" hidden>
   <header class="kopf">
     <div class="kopf-zeile">
-      <svg class="kopf-blume wippen" width="34" height="34" aria-hidden="true" focusable="false"><use href="#g-sb"/></svg>
+      <svg class="kopf-blume" width="30" height="30" aria-hidden="true" focusable="false"><use href="#g-sb"/></svg>
       <h1 id="titel">JGA-Planer</h1>
       <span id="sync" class="sync" aria-live="polite"></span>
       <button id="btn-neuladen" class="icon-btn" type="button" title="Neu laden" aria-label="Neu laden">↻</button>
@@ -325,15 +265,6 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
     </nav>
   </header>
   <main id="view"></main>
-  <div class="wiese" aria-hidden="true">
-    <svg class="wackel" width="52" height="120"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="65" height="150"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="43" height="100"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="72" height="165"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="57" height="130"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="63" height="145"><use href="#g-stiel"/></svg>
-    <svg class="wackel" width="48" height="110"><use href="#g-stiel"/></svg>
-  </div>
 </div>
 
 <dialog id="dlg-programm">
@@ -343,10 +274,6 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
     <div class="zwei">
       <label>Kategorie<select name="kategorie"></select></label>
       <label>Status<select name="status"></select></label>
-    </div>
-    <div class="zwei">
-      <label>Datum<input name="datum" type="date"></label>
-      <label>Uhrzeit<input name="uhrzeit" type="time"></label>
     </div>
     <div class="zwei">
       <label>Dauer<input name="dauer" placeholder="z. B. 2 h" maxlength="50"></label>
@@ -373,6 +300,43 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
   </form>
 </dialog>
 
+<dialog id="dlg-ablauf">
+  <form id="ablauf-form" novalidate>
+    <h2 id="abl-titel">Ablauf-Eintrag</h2>
+    <label>Titel *<input name="titel" maxlength="200"></label>
+    <label>Tag<input name="tag" list="tag-liste" maxlength="40" placeholder="z. B. Autofahrt"></label>
+    <div class="tag-wahl" id="tag-wahl"></div>
+    <div class="zwei">
+      <label>Start<input name="uhrzeit" type="time" step="900"></label>
+      <label>Dauer (Minuten)<input name="dauer" type="number" min="15" step="15" inputmode="numeric"></label>
+    </div>
+    <label>Ort / Ziel<input name="ort" maxlength="200"></label>
+    <label>Notiz<textarea name="notiz" rows="2" maxlength="2000"></textarea></label>
+    <p class="klein" id="abl-link" style="margin:0"></p>
+    <div class="dlg-aktionen">
+      <button type="button" class="btn gefahr" id="abl-loeschen" style="margin-right:auto">Entfernen</button>
+      <button type="button" class="btn" data-schliessen>Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="tag-liste"></datalist>
+
+<dialog id="dlg-jga">
+  <form id="jga-form" novalidate>
+    <h2>Wann und wo ist der JGA?</h2>
+    <div class="zwei">
+      <label>Datum<input name="jgaDatum" type="date"></label>
+      <label>Start<input name="startZeit" type="time" step="900"></label>
+    </div>
+    <label>Treffpunkt<input name="startOrt" maxlength="200" placeholder="z. B. Hauptbahnhof Köln"></label>
+    <div class="dlg-aktionen">
+      <button type="button" class="btn" data-schliessen>Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="dlg-qr">
   <form method="dialog">
     <h2 id="qr-titel">QR-Code</h2>
@@ -393,13 +357,23 @@ details.orga-details[open]>summary{margin-bottom:.6rem}
 
 /* ═══════════ Konfiguration ═══════════ */
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1rSP-naI_hRmBl9I-Hf8idLVESPF1D3_5_Y1iCI5vZ_z7Jp0KLWcpmWOlgIDebmmCZQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDsXuxAW2IoB3QEaI7ICA8EVAY9ffGAy6CtOAbl7EqvYv58rC3t-KvOXNq-g3Vx1xFiQ/exec';
 
 const KATEGORIEN = ['Aktivität', 'Essen', 'Übernachtung', 'Deko', 'Spiel', 'Überraschung', 'Einkauf'];   // Einkauf: z. B. T-Shirts
-const KAT_ICON = { 'Aktivität': '🎉', 'Essen': '🍝', 'Übernachtung': '🛏️', 'Deko': '🎀', 'Spiel': '🎲', 'Überraschung': '🎁', 'Einkauf': '🛍️' };
-const KAT_FARBE = { 'Aktivität': '#FFE3EC', 'Essen': '#FFF0C2', 'Übernachtung': '#E3ECFF', 'Deko': '#F3E6FF',
-                    'Spiel': '#E2F6E9', 'Überraschung': '#FFE6D6', 'Einkauf': '#DFF5F3' };
 const STATUS = ['Idee', 'Fix gebucht', 'Abgelehnt'];
+
+// Tags für den Tagesablauf (frei erweiterbar: im Formular kann man auch eigene eintippen)
+const TAGS = [
+  { name: 'Treffpunkt',   farbe: '#3FA57A' },
+  { name: 'Aktivität',    farbe: '#D2386E' },
+  { name: 'Autofahrt',    farbe: '#4F7FE0' },
+  { name: 'Essen',        farbe: '#E8962E' },
+  { name: 'Getränke',     farbe: '#A35FCB' },
+  { name: 'Pause',        farbe: '#9AA5B1' },
+  { name: 'Überraschung', farbe: '#E0663F' },
+  { name: 'Übernachtung', farbe: '#5C6AC4' }
+];
+const TAG_SONST = '#A89F94';
 
 // Timeline
 const PX_H = 72;          // Pixel pro Stunde
@@ -422,7 +396,8 @@ const ORGA = [
 ];
 
 const BLATT = {
-  Programm:    { key: 'programm',    autor: 'erstelltVon', zeit: 'createdAt',   kinder: [['bewertungen', 'programmId'], ['kommentare', 'programmId']] },
+  Programm:    { key: 'programm',    autor: 'erstelltVon', zeit: 'createdAt',   kinder: [['bewertungen', 'programmId'], ['kommentare', 'programmId'], ['ablauf', 'programmId']] },
+  Ablauf:      { key: 'ablauf',      autor: 'erstelltVon', zeit: 'zeitstempel' },
   Bewertungen: { key: 'bewertungen', autor: 'wer',  zeit: 'zeitstempel' },
   Vorschlaege: { key: 'vorschlaege', autor: 'wer',  zeit: 'zeitstempel', kinder: [['stimmen', 'vorschlagId']] },
   Stimmen:     { key: 'stimmen',     autor: 'wer',  zeit: 'zeitstempel' },
@@ -430,7 +405,7 @@ const BLATT = {
   Teilnehmer:  { key: 'teilnehmer',  autor: 'name', zeit: 'zeitstempel' }
 };
 
-const PFELDER = ['titel', 'kategorie', 'status', 'datum', 'uhrzeit', 'dauer', 'ort', 'kosten', 'pauschal', 'maxPersonen',
+const PFELDER = ['titel', 'kategorie', 'status', 'dauer', 'ort', 'kosten', 'pauschal', 'maxPersonen',
                  'link', 'beschreibung', 'aufwand', 'wetterfest', 'vorlaufzeit'];
 const FELD_LABEL = { titel: 'Titel', kategorie: 'Kategorie', status: 'Status', datum: 'Datum', uhrzeit: 'Uhrzeit',
   dauer: 'Dauer', ort: 'Ort', kosten: 'Preis p. P.', pauschal: 'Pauschalpreis', maxPersonen: 'Max. Personen', link: 'Link', beschreibung: 'Beschreibung',
@@ -494,7 +469,12 @@ function istEingabe(el) { return el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagNa
 function blume(cls, w, h, id) {
   return `<svg class="${cls || ''}" width="${w}" height="${h || w}" aria-hidden="true" focusable="false"><use href="#${id || 'g-sb'}"/></svg>`;
 }
-function leerZustand(text) { return `<div class="leer">${blume('wippen', 64)}<p style="margin:0">${text}</p></div>`; }
+function leerZustand(text) { return `<div class="leer">${blume('', 56)}<p style="margin:0">${text}</p></div>`; }
+function tagFarbe(tag) {
+  const t = TAGS.find(x => x.name.toLowerCase() === String(tag || '').trim().toLowerCase());
+  return t ? t.farbe : TAG_SONST;
+}
+function tagFuerKategorie(k) { return { 'Essen': 'Essen', 'Übernachtung': 'Übernachtung', 'Überraschung': 'Überraschung' }[k] || 'Aktivität'; }
 
 /* Zeit-Helfer für die Timeline */
 function zuMin(uhr) {
@@ -685,7 +665,7 @@ function postToSheet(payload) {
 /** Serverstand + noch ausstehende eigene Änderungen. */
 function sicht() {
   const d = JSON.parse(JSON.stringify((server && server.daten) || {}));
-  ['programm', 'bewertungen', 'vorschlaege', 'stimmen', 'kommentare', 'teilnehmer', 'verlauf']
+  ['programm', 'bewertungen', 'vorschlaege', 'stimmen', 'kommentare', 'teilnehmer', 'verlauf', 'ablauf']
     .forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
   if (!d.einstellungen || Array.isArray(d.einstellungen)) d.einstellungen = {};
   pending.forEach(op => anwenden(d, op));
@@ -833,7 +813,6 @@ function budgetBox(d, extra) {
   const fix = d.programm.filter(p => p.status === 'Fix gebucht');
   const s = summe(fix, g);
   return `<section class="budget">
-    ${blume('deko-blume wippen', 112)}
     <div><span class="gross">${euro(s.jeP)}</span> pro Person verplant</div>
     <div class="budget-neben">${g ? euro(s.gesamt) + ' gesamt bei ' : ''}<button type="button" class="link-btn" data-act="gruppe">${g ? g + ' Personen' : 'Gruppengröße festlegen'}</button>
       ${!g && s.pa ? ` · ${euro(s.pa)} Pauschalen noch nicht aufgeteilt` : ''}${extra || ''}</div>
@@ -855,7 +834,7 @@ function viewProgramm(d) {
       <option value="!Abgelehnt"${filter.status === '!Abgelehnt' ? ' selected' : ''}>Ohne Abgelehnte</option>
       ${STATUS.map(s => `<option${filter.status === s ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select>
     <select data-filter="sort" aria-label="Sortierung">
-      ${[['score', 'Beste zuerst'], ['datum', 'Nach Termin'], ['kosten', 'Günstigste zuerst'], ['neu', 'Neueste zuerst']]
+      ${[['score', 'Beste zuerst'], ['datum', 'Nach Ablauf'], ['kosten', 'Günstigste zuerst'], ['neu', 'Neueste zuerst']]
         .map(([v, l]) => `<option value="${v}"${filter.sort === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
   </div>`;
 
@@ -865,10 +844,11 @@ function viewProgramm(d) {
   else if (filter.status) liste = liste.filter(p => (p.status || 'Idee') === filter.status);
 
   const sc = new Map(liste.map(p => [String(p.id), score(bewertungenVon(d, String(p.id)))]));
-  const termin = p => (p.datum || '9999') + (p.uhrzeit || '99');
+  const abl = ablaufZeiten(d);
+  const termin = p => abl.has(String(p.id)) ? abl.get(String(p.id)) : 99999;
   const vergl = {
     score: (a, b) => (sc.get(String(b.id)).wert ?? -1) - (sc.get(String(a.id)).wert ?? -1),
-    datum: (a, b) => termin(a).localeCompare(termin(b)),
+    datum: (a, b) => termin(a) - termin(b),
     kosten: (a, b) => kostenVon(a, g).jeP - kostenVon(b, g).jeP,
     neu: (a, b) => String(b.createdAt).localeCompare(String(a.createdAt))
   }[filter.sort] || (() => 0);
@@ -890,9 +870,10 @@ function karte(p, d, sc) {
 
   const chips = [];
   if (p.status === 'Fix gebucht') chips.push(chip('✓ Fix gebucht', 'ok'));
-  if (p.kategorie) chips.push(chip((KAT_ICON[p.kategorie] ? KAT_ICON[p.kategorie] + ' ' : '') + p.kategorie));
-  if (p.datum) chips.push(chip(datumKurz(p.datum) + (p.uhrzeit ? ', ' + p.uhrzeit : '')));
-  else if (p.uhrzeit) chips.push(chip(p.uhrzeit + ' Uhr'));
+  if (p.kategorie) chips.push(chip(p.kategorie));
+  const imAblauf = d.ablauf.filter(a => String(a.programmId) === id && zuMin(a.uhrzeit) != null)
+    .map(a => zuMin(a.uhrzeit)).sort((x, y) => x - y).map(zuUhr);
+  if (imAblauf.length) chips.push(chip('Ablauf ' + imAblauf.join(', ')));
   if (p.dauer) chips.push(chip('⏱ ' + p.dauer));
   if (p.ort) chips.push(chip('📍 ' + p.ort));
   // Preis-Chips sind anklickbar → öffnet direkt das Bearbeiten mit dem Preisfeld
@@ -972,52 +953,98 @@ function viewBewerten(d, pid) {
 }
 
 /* ── Ablauf ── */
-function tageListe(d) { return String(d.einstellungen.tage || '').split(',').map(s => s.trim()).filter(istDatum); }
+/** Allgemeine JGA-Daten: ein Datum, eine Startzeit, ein Treffpunkt. */
+function jga(d) {
+  const e = d.einstellungen;
+  return {
+    datum: istDatum(e.jgaDatum) ? String(e.jgaDatum).slice(0, 10) : '',
+    start: zuMin(e.startZeit) != null ? zuUhr(zuMin(e.startZeit)) : '',
+    ort: String(e.startOrt || '').trim()
+  };
+}
+
+function jgaInfoHtml(d) {
+  const j = jga(d);
+  if (!j.datum && !j.start && !j.ort) {
+    return `<section class="jga-info">${blume('', 44)}
+      <div class="jga-text"><b>Wann und wo ist der JGA?</b><span class="klein">Datum, Startzeit und Treffpunkt festlegen</span></div>
+      <button type="button" class="btn small primary" data-act="jga-edit">Festlegen</button></section>`;
+  }
+  let countdown = '';
+  if (j.datum) {
+    const heute = new Date(); heute.setHours(12, 0, 0, 0);
+    const n = Math.round((datumObj(j.datum) - heute) / 86400000);
+    countdown = n > 1 ? `in ${n} Tagen` : n === 1 ? 'morgen' : n === 0 ? 'heute' : 'vorbei';
+  }
+  const karte = j.ort ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(j.ort)}` : '';
+  return `<section class="jga-info">
+    ${blume('', 52)}
+    <div class="jga-text">
+      <span class="jga-datum">${j.datum ? esc(datumObj(j.datum).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })) : 'Datum offen'}</span>
+      <span>${j.start ? 'Start ' + esc(j.start) + ' Uhr' : 'Startzeit offen'}${j.ort ? ` · Treffpunkt <a href="${esc(karte)}" target="_blank" rel="noopener noreferrer">${esc(j.ort)}</a>` : ''}</span>
+      ${countdown ? `<span class="klein">${countdown}</span>` : ''}
+    </div>
+    <button type="button" class="btn small" data-act="jga-edit">Ändern</button>
+  </section>`;
+}
+
+/** Ablauf-Einträge mit berechneten Zeiten; verknüpfte zeigen den aktuellen Programm-Titel. */
+function ablaufPunkte(d) {
+  const prog = new Map(d.programm.map(p => [String(p.id), p]));
+  return d.ablauf.map(a => {
+    const q = Object.assign({}, a);
+    const p = a.programmId ? prog.get(String(a.programmId)) : null;
+    if (p) { q.titel = p.titel; q._idee = p.status !== 'Fix gebucht'; }
+    q._dur = Math.max(15, Math.round(zahl(a.dauer)) || 60);
+    q._s = zuMin(a.uhrzeit);
+    if (q._s != null) q._e = q._s + q._dur;
+    return q;
+  });
+}
+/** Programm-ID → früheste Uhrzeit im Ablauf (zum Sortieren). */
+function ablaufZeiten(d) {
+  const m = new Map();
+  d.ablauf.forEach(a => {
+    const t = zuMin(a.uhrzeit), k = String(a.programmId || '');
+    if (k && t != null && (!m.has(k) || t < m.get(k))) m.set(k, t);
+  });
+  return m;
+}
+function naechsteFreieZeit(d) {
+  let t = zuMin(jga(d).start);
+  if (t == null) t = 600;
+  ablaufPunkte(d).forEach(p => { if (p._s != null) t = Math.max(t, p._e); });
+  return Math.min(t, (TAG_GRENZE + 24) * 60 - 15);
+}
 
 function viewAblauf(d) {
-  const nurFix = filter.nurFix === true;
-  const liste = d.programm
-    .filter(p => p.status !== 'Abgelehnt' && (!nurFix || p.status === 'Fix gebucht'))
-    .map(p => {
-      const q = Object.assign({}, p);
-      q._dur = dauerMin(p.dauer);
-      q._s = istDatum(p.datum) ? zuMin(p.uhrzeit) : null;
-      if (q._s != null) q._e = q._s + q._dur;
-      return q;
-    });
-  const geplant = liste.filter(p => p._s != null);
-  const frei = liste.filter(p => p._s == null);
+  const j = jga(d);
+  const punkte = ablaufPunkte(d);
+  const geplant = punkte.filter(p => p._s != null);
+  const ohneZeit = punkte.filter(p => p._s == null);
+  const startMin = zuMin(j.start);
 
-  const gespeichert = tageListe(d);
-  const tageSet = new Set(gespeichert);
-  d.programm.forEach(p => { if (p.status !== 'Abgelehnt' && istDatum(p.datum)) tageSet.add(String(p.datum).slice(0, 10)); });
-  const tage = [...tageSet].sort();
-
-  // gemeinsamer Stundenbereich für alle Tage
-  let vonH = 10, bisH = 24;
-  geplant.forEach(p => { vonH = Math.min(vonH, Math.floor(p._s / 60)); bisH = Math.max(bisH, Math.ceil(p._e / 60) + 1); });
-  vonH = Math.max(TAG_GRENZE, vonH);
+  let vonMin = startMin != null ? startMin : 600;
+  geplant.forEach(p => { vonMin = Math.min(vonMin, p._s); });
+  const vonH = Math.max(TAG_GRENZE, Math.floor(vonMin / 60));
+  let bisH = Math.max(vonH + 8, 22);
+  geplant.forEach(p => { bisH = Math.max(bisH, Math.ceil(p._e / 60) + 1); });
   bisH = Math.min(TAG_GRENZE + 24, bisH);
 
-  let html = `<div class="toolbar">
-    <label class="check"><input type="checkbox" data-filter="nurFix"${nurFix ? ' checked' : ''}> Nur fix gebuchte</label>
-    <form id="tag-form" class="inline-form" style="margin:0 0 0 auto">
-      <input type="date" name="datum" aria-label="Tag hinzufügen" style="width:auto">
-      <button class="btn small" type="submit">+ Tag</button>
-    </form>
-  </div>
-  <p class="tl-hinweis">Zieh Einträge am <b>⠿</b> auf die gewünschte Uhrzeit, auch in einen anderen Tag. Antippen öffnet die Details.</p>`;
+  const verplant = new Set(d.ablauf.map(a => String(a.programmId || '')).filter(Boolean));
+  const vorrat = d.programm.filter(p => p.status !== 'Abgelehnt' && !verplant.has(String(p.id)))
+    .sort((a, b) => (b.status === 'Fix gebucht') - (a.status === 'Fix gebucht'));
 
-  if (!tage.length) html += leerZustand('Noch kein Tag angelegt. Wähle oben ein Datum und tippe auf „+ Tag“.');
-  tage.forEach(t => {
-    const items = geplant.filter(p => String(p.datum).slice(0, 10) === t);
-    const entfernbar = gespeichert.includes(t) && !d.programm.some(p => String(p.datum || '').slice(0, 10) === t);
-    html += tagHtml(t, items, vonH, bisH, entfernbar);
-  });
-  html += `<section class="tl-ablage" data-ablage="1">
-    <h3>📌 Noch ohne Termin (${frei.length})</h3>
-    ${frei.length ? frei.map(p => tlBlock(p, null)).join('')
-      : '<p class="klein" style="margin:0">Alles eingeplant! Zieh einen Eintrag hierher, um seine Uhrzeit wieder zu entfernen.</p>'}
+  let html = jgaInfoHtml(d) + `<div class="toolbar">
+    <button type="button" class="btn primary" data-act="abl-neu">+ Eintrag</button>
+    <span class="klein">Block ziehen zum Verschieben · unteren Rand ziehen für die Dauer</span>
+  </div>`;
+  html += timelineHtml(geplant, vonH, bisH, startMin, j.ort);
+  if (ohneZeit.length) {
+    html += `<section class="tl-ablage"><h3>Ohne Uhrzeit</h3>${ohneZeit.map(p => tlBlock(p, null)).join('')}</section>`;
+  }
+  html += `<section class="tl-ablage"><h3>Aus dem Programm</h3>
+    ${vorrat.length ? vorrat.map(vorratHtml).join('') : '<p class="klein" style="margin:0">Alle Programmpunkte sind eingeplant.</p>'}
   </section>`;
   return html;
 }
@@ -1038,22 +1065,17 @@ function spurenVerteilen(items) {
   if (cluster.length) abschliessen();
 }
 
-function tagHtml(datum, items, vonH, bisH, entfernbar) {
+function timelineHtml(items, vonH, bisH, startMin, startOrt) {
   items.sort((a, b) => a._s - b._s || b._dur - a._dur);
   spurenVerteilen(items);
 
-  // Zwischenstücke: Bus bei Ortswechsel, Cocktail bei langer Pause
-  let zwischen = '', vorher = null;
+  // Ortswechsel ohne eingeplante Fahrt dezent markieren (Start am Treffpunkt zählt mit)
+  let vorher = startMin != null && startOrt ? { ort: startOrt, _e: startMin, tag: '', treffpunkt: true } : null;
   items.forEach(p => {
     if (vorher && p._s >= vorher._e) {
-      const luecke = p._s - vorher._e;
-      const top = (vorher._e - vonH * 60) / 60 * PX_H, h = luecke / 60 * PX_H;
-      const ortA = String(vorher.ort || '').trim(), ortB = String(p.ort || '').trim();
-      if (ortA && ortB && ortA.toLowerCase() !== ortB.toLowerCase()) {
-        if (h >= 36) zwischen += wegHtml(top, h, ortA, ortB);
-        else p._anreise = `<span class="tl-anreise${luecke < 15 ? ' knapp' : ''}">🚌 von ${esc(ortA)}${luecke < 15 ? ' – keine Fahrzeit eingeplant!' : ''}</span>`;
-      } else if (luecke >= 60) {
-        zwischen += pauseHtml(top, h, luecke);
+      const a = String(vorher.ort || '').trim(), b = String(p.ort || '').trim();
+      if (a && b && a.toLowerCase() !== b.toLowerCase() && vorher.tag !== 'Autofahrt' && p.tag !== 'Autofahrt') {
+        p._hinweis = `von ${vorher.treffpunkt ? 'Treffpunkt' : a} – Fahrt einplanen?`;
       }
     }
     if (!vorher || p._e > vorher._e) vorher = p;
@@ -1065,49 +1087,55 @@ function tagHtml(datum, items, vonH, bisH, entfernbar) {
     linien += `<div class="tl-linie" style="top:${y}px"></div><div class="tl-std" style="top:${y}px">${String(h % 24).padStart(2, '0')}:00</div>`;
     if (h < bisH) linien += `<div class="tl-linie halb" style="top:${y + PX_H / 2}px"></div>`;
   }
+  const start = startMin != null
+    ? `<div class="tl-start" style="top:${(startMin - vonH * 60) / 60 * PX_H}px"><span>Start ${zuUhr(startMin)}${startOrt ? ' · ' + esc(startOrt) : ''}</span></div>`
+    : '';
   return `<section class="tl-tag">
-    <div class="tl-kopf">${blume('wippen', 26)}<h3>${esc(datumLang(datum))}</h3>
-      <span class="klein">${items.length} Programmpunkt${items.length === 1 ? '' : 'e'}</span>
-      ${entfernbar ? `<button type="button" class="mini" data-act="tag-weg" data-datum="${esc(datum)}" title="Tag entfernen" aria-label="Tag entfernen">×</button>` : ''}
-    </div>
-    <div class="tl-raster" data-datum="${esc(datum)}" data-von="${vonH}" data-bis="${bisH}" style="height:${(bisH - vonH) * PX_H}px">
-      ${linien}
-      <div class="tl-spur">${zwischen}${items.map(p => tlBlock(p, vonH)).join('')}</div>
+    <div class="tl-raster" data-von="${vonH}" data-bis="${bisH}" style="height:${(bisH - vonH) * PX_H}px">
+      ${linien}${start}
+      <div class="tl-spur">${items.map(p => tlBlock(p, vonH)).join('')}</div>
     </div>
   </section>`;
 }
 
 function tlBlock(p, vonH) {
   const frei = vonH == null;
-  let style = `--kat:${KAT_FARBE[p.kategorie] || '#F5F0E6'}`;
+  let style = `--tag:${tagFarbe(p.tag)}`;
   if (!frei) {
     const top = (p._s - vonH * 60) / 60 * PX_H;
     const h = Math.max(30, p._dur / 60 * PX_H - 3);
     style += `;top:${top}px;height:${h}px;left:calc(${p._lane / p._lanes * 100}% + 2px);width:calc(${100 / p._lanes}% - 4px)`;
   }
-  const zeit = frei
-    ? [istDatum(p.datum) ? datumKurz(p.datum) : '', p.dauer ? dauerText(p._dur) : ''].filter(Boolean).join(' · ')
-    : zuUhr(p._s) + '–' + zuUhr(p._e);
-  return `<div class="tl-block${p.status === 'Fix gebucht' ? '' : ' idee'}${frei ? ' frei' : ''}${wartend.has(String(p.id)) ? ' wartet' : ''}"
-      data-act="bearbeiten" data-id="${esc(p.id)}" data-dur="${p._dur}" style="${style}" title="${esc(p.titel)}">
-    <span class="tl-griff" title="Ziehen">⠿</span>
-    ${zeit ? `<span class="tl-zeit">${esc(zeit)}</span>` : ''}
-    <b>${KAT_ICON[p.kategorie] || '✨'} ${esc(p.titel)}</b>
-    ${p.ort ? `<span class="tl-ort">📍 ${esc(p.ort)}</span>` : ''}${p._anreise || ''}
+  const zeit = frei ? dauerText(p._dur) : zuUhr(p._s) + '–' + zuUhr(p._e);
+  const ort = p.ort ? (p.tag === 'Autofahrt' ? '→ ' : '') + p.ort : '';
+  return `<div class="tl-block${frei ? ' frei' : ''}${p._idee ? ' idee' : ''}${wartend.has(String(p.id)) ? ' wartet' : ''}"
+      data-act="abl-edit" data-id="${esc(p.id)}" data-dur="${p._dur}" data-s="${p._s == null ? '' : p._s}" style="${style}" title="${esc(p.titel)}">
+    <span class="tl-griff"></span>
+    <span class="tl-zeit"><span class="tl-von-bis">${esc(zeit)}</span>${p.tag ? ` · <span class="tl-tagname">${esc(p.tag)}</span>` : ''}</span>
+    <b>${esc(p.titel)}</b>
+    ${ort ? `<span class="tl-ort">${esc(ort)}</span>` : ''}
+    ${p._hinweis ? `<span class="tl-ort-hinweis">${esc(p._hinweis)}</span>` : ''}
+    ${frei ? '' : '<span class="tl-resize" title="Dauer ändern"></span>'}
   </div>`;
 }
 
-function wegHtml(top, h, von, nach) {
-  return `<div class="tl-weg" style="top:${top}px;height:${h}px">
-    <div class="weg-strasse"></div>
-    <div class="bus-bahn"><div class="bus-fahrt">${blume('bus-huepf', 46, 28, 'g-bus')}</div></div>
-    <span class="weg-text">${esc(von)} → ${esc(nach)}</span>
+/** Programmpunkt, der noch nicht im Ablauf ist: ziehen oder „Einplanen“. */
+function vorratHtml(p) {
+  const dur = dauerMin(p.dauer);
+  return `<div class="tl-block frei vorrat${p.status === 'Fix gebucht' ? '' : ' idee'}" data-pid="${esc(p.id)}" data-dur="${dur}"
+      style="--tag:${tagFarbe(tagFuerKategorie(p.kategorie))}" title="${esc(p.titel)}">
+    <span class="tl-griff"></span>
+    <span class="tl-zeit">${esc(p.status || 'Idee')}${p.dauer ? ' · ' + esc(dauerText(dur)) : ''}</span>
+    <b>${esc(p.titel)}</b>
+    <button type="button" class="btn small vorrat-btn" data-act="abl-einplanen" data-pid="${esc(p.id)}">Einplanen</button>
   </div>`;
 }
-function pauseHtml(top, h, min) {
-  return `<div class="tl-weg pause" style="top:${top}px;height:${h}px">
-    ${blume('wackel', 22, 26, 'g-cocktail')}<span class="weg-text">Pause · ${esc(dauerText(min))}</span>
-  </div>`;
+
+function ausProgramm(p, uhrzeit) {
+  schreiben({ aktion: 'neu', blatt: 'Ablauf', id: uuid(), felder: {
+    programmId: String(p.id), titel: p.titel, tag: tagFuerKategorie(p.kategorie),
+    uhrzeit: uhrzeit, dauer: String(dauerMin(p.dauer)), ort: p.ort || '', notiz: ''
+  } });
 }
 
 /* ── Kosten ── */
@@ -1189,7 +1217,7 @@ function viewZusagen(d) {
   const KNOPF = { ja: 'Bin dabei 🎉', vielleicht: 'Vielleicht', nein: 'Kann leider nicht' };
   const UEBER = { ja: 'Dabei', vielleicht: 'Vielleicht', nein: 'Abgesagt' };
   const g = gruppe(d);
-  return `<section class="panel">
+  return jgaInfoHtml(d) + `<section class="panel">
     <h2>Bist du dabei, ${esc(name)}?</h2>
     <div class="aktionen">${['ja', 'vielleicht', 'nein'].map(z =>
       `<button type="button" class="btn${meine && meine.zusage === z ? ' aktiv' : ''}" data-act="zusage" data-wert="${z}">${KNOPF[z]}</button>`).join('')}</div>
@@ -1246,9 +1274,16 @@ view.addEventListener('click', ev => {
       if (v && confirm(`Idee „${v.text}“ löschen?`)) schreiben({ aktion: 'loeschen', blatt: 'Vorschlaege', id: id });
       break;
     }
-    case 'tag-weg': {
-      const rest = tageListe(d).filter(t => t !== b.dataset.datum);
-      schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'tage', wert: rest.join(',') });
+    case 'jga-edit': oeffneJga(); break;
+    case 'abl-neu': oeffneAblauf(null, { uhrzeit: zuUhr(naechsteFreieZeit(d)) }); break;
+    case 'abl-edit': {
+      const a = d.ablauf.find(x => String(x.id) === id);
+      if (a) oeffneAblauf(a);
+      break;
+    }
+    case 'abl-einplanen': {
+      const p = d.programm.find(x => String(x.id) === b.dataset.pid);
+      if (p) ausProgramm(p, zuUhr(naechsteFreieZeit(d)));
       break;
     }
     case 'zusage':
@@ -1284,12 +1319,6 @@ view.addEventListener('submit', ev => {
   } else if (f.classList.contains('kom-form')) {
     const t = el.text.value.trim();
     if (t) schreiben({ aktion: 'neu', blatt: 'Kommentare', id: uuid(), felder: { programmId: f.dataset.pid, text: t } });
-  } else if (f.id === 'tag-form') {
-    const t = el.datum.value;
-    if (!istDatum(t)) { el.datum.focus(); return; }
-    const set = new Set(tageListe(sicht()));
-    set.add(t);
-    schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'tage', wert: [...set].sort().join(',') });
   } else if (f.id === 'bew-form') {
     const felder = { programmId: f.dataset.pid, notiz: el.notiz.value.trim() };
     KRITERIEN.forEach(k => { felder[k.key] = el[k.key].value; });
@@ -1343,87 +1372,107 @@ function gruppeSetzen(d) {
 }
 
 
-/* ═══════════ Timeline: Drag & Drop ═══════════
- * Maus: ganzen Block ziehen. Touch: nur am Griff ⠿ (sonst kann man nicht scrollen).
- * Raster 15 Minuten, Auto-Scroll am Bildschirmrand, Ablegen in jedem Tag oder in „Ohne Termin". */
+/* ═══════════ Tagesablauf: Ziehen & Dehnen ═══════════
+ * Verschieben: Maus = ganzer Block, Touch = farbiger Streifen links (sonst kann man nicht scrollen).
+ * Dauer: unteren Rand ziehen. Raster 15 Minuten, Auto-Scroll am Bildschirmrand.
+ * Programmpunkte aus „Aus dem Programm“ lassen sich direkt in die Timeline ziehen. */
 
 let drag = null, klickSperreBis = 0;
 
 view.addEventListener('pointerdown', ev => {
-  if (ev.button !== 0) return;
+  if (ev.button !== 0 || ev.target.closest('button')) return;
   const blk = ev.target.closest('.tl-block');
   if (!blk) return;
+  const dehnen = !!ev.target.closest('.tl-resize');
   const griff = ev.target.closest('.tl-griff');
-  if (!griff && ev.pointerType !== 'mouse') return;
+  if (!dehnen && !griff && ev.pointerType !== 'mouse') return;
   ev.preventDefault();
   const r = blk.getBoundingClientRect();
   const dur = +blk.dataset.dur || 60;
   const hoehe = Math.max(30, dur / 60 * PX_H - 3);
   const breite = Math.min(r.width, 300);
   drag = {
-    id: blk.dataset.id, el: blk, pid: ev.pointerId,
+    modus: dehnen ? 'dauer' : 'zeit',
+    id: blk.dataset.id || '', progId: blk.dataset.pid || '', el: blk, zeiger: ev.pointerId,
     x0: ev.clientX, y0: ev.clientY, x: ev.clientX, y: ev.clientY,
     offX: Math.min(ev.clientX - r.left, breite - 12), offY: Math.min(ev.clientY - r.top, hoehe - 8),
-    breite: breite, hoehe: hoehe, dur: dur, aktiv: false, ziel: null
+    breite: breite, hoehe: hoehe, dur: dur, start: blk.dataset.s === '' ? null : +blk.dataset.s,
+    aktiv: false, ziel: null
   };
 });
 
 document.addEventListener('pointermove', ev => {
-  if (!drag || ev.pointerId !== drag.pid) return;
+  if (!drag || ev.pointerId !== drag.zeiger) return;
   drag.x = ev.clientX; drag.y = ev.clientY;
   if (!drag.aktiv) {
     if (Math.hypot(drag.x - drag.x0, drag.y - drag.y0) < 5) return;
     dragStart();
   }
   ev.preventDefault();
-  dragBewegen();
+  bewegen();
 }, { passive: false });
-document.addEventListener('pointerup', ev => { if (drag && ev.pointerId === drag.pid) dragEnde(true); });
-document.addEventListener('pointercancel', ev => { if (drag && ev.pointerId === drag.pid) dragEnde(false); });
+document.addEventListener('pointerup', ev => { if (drag && ev.pointerId === drag.zeiger) dragEnde(true); });
+document.addEventListener('pointercancel', ev => { if (drag && ev.pointerId === drag.zeiger) dragEnde(false); });
 document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && drag) dragEnde(false); });
 
 function dragStart() {
   drag.aktiv = true;
-  const g = drag.el.cloneNode(true);
-  g.classList.add('tl-geist');
-  g.classList.remove('zieht', 'frei');
-  g.style.width = drag.breite + 'px';
-  g.style.height = drag.hoehe + 'px';
-  document.body.appendChild(g);
-  drag.geist = g;
-  drag.marker = document.createElement('div');
-  drag.marker.className = 'tl-marker';
-  drag.marker.appendChild(document.createElement('span'));
-  drag.el.classList.add('zieht');
-  document.body.classList.add('am-ziehen');
+  if (drag.modus === 'dauer') {
+    document.body.classList.add('am-dehnen');
+  } else {
+    const g = drag.el.cloneNode(true);
+    g.classList.add('tl-geist');
+    g.classList.remove('zieht', 'frei', 'vorrat');
+    const knopf = g.querySelector('button');
+    if (knopf) knopf.remove();
+    g.style.width = drag.breite + 'px';
+    g.style.height = drag.hoehe + 'px';
+    document.body.appendChild(g);
+    drag.geist = g;
+    drag.marker = document.createElement('div');
+    drag.marker.className = 'tl-marker';
+    drag.marker.appendChild(document.createElement('span'));
+    drag.el.classList.add('zieht');
+    document.body.classList.add('am-ziehen');
+  }
   drag.raf = requestAnimationFrame(autoScroll);
 }
 
-function dragBewegen() {
+function bewegen() { if (drag.modus === 'dauer') dauerBewegen(); else zeitBewegen(); }
+
+function zeitBewegen() {
   const x = drag.x, y = drag.y;
-  drag.geist.style.transform = `translate(${x - drag.offX}px, ${y - drag.offY}px) rotate(-2deg)`;
+  drag.geist.style.transform = `translate(${x - drag.offX}px, ${y - drag.offY}px)`;
   const unter = document.elementFromPoint(x, y);
   const raster = unter && unter.closest('.tl-raster');
-  const ablage = unter && unter.closest('.tl-ablage');
-  document.querySelectorAll('.tl-ablage.drop-ok').forEach(e => e.classList.remove('drop-ok'));
   drag.ziel = null;
-  if (raster) {
-    const r = raster.getBoundingClientRect();
-    const von = +raster.dataset.von, bis = +raster.dataset.bis;
-    let t = von * 60 + (y - drag.offY - r.top) / PX_H * 60;
-    t = Math.round(t / 15) * 15;
-    t = Math.max(von * 60, Math.min(bis * 60 - 15, t));
-    drag.ziel = { datum: raster.dataset.datum, uhrzeit: zuUhr(t) };
-    if (drag.marker.parentNode !== raster) raster.appendChild(drag.marker);
-    drag.marker.style.top = ((t - von * 60) / 60 * PX_H) + 'px';
-    const txt = zuUhr(t) + '–' + zuUhr(t + drag.dur);
-    drag.marker.firstChild.textContent = txt;
-    const z = drag.geist.querySelector('.tl-zeit');
-    if (z) z.textContent = txt;
-  } else {
-    drag.marker.remove();
-    if (ablage) { ablage.classList.add('drop-ok'); drag.ziel = { ablage: true }; }
-  }
+  if (!raster) { drag.marker.remove(); return; }
+  const r = raster.getBoundingClientRect();
+  const von = +raster.dataset.von, bis = +raster.dataset.bis;
+  let t = von * 60 + (y - drag.offY - r.top) / PX_H * 60;
+  t = Math.round(t / 15) * 15;
+  t = Math.max(von * 60, Math.min(bis * 60 - 15, t));
+  drag.ziel = { uhrzeit: zuUhr(t) };
+  if (drag.marker.parentNode !== raster) raster.appendChild(drag.marker);
+  drag.marker.style.top = ((t - von * 60) / 60 * PX_H) + 'px';
+  const txt = zuUhr(t) + '–' + zuUhr(t + drag.dur);
+  drag.marker.firstChild.textContent = txt;
+  const z = drag.geist.querySelector('.tl-von-bis') || drag.geist.querySelector('.tl-zeit');
+  if (z) z.textContent = txt;
+}
+
+function dauerBewegen() {
+  const raster = drag.el.closest('.tl-raster');
+  if (!raster || drag.start == null) return;
+  const r = raster.getBoundingClientRect();
+  const von = +raster.dataset.von, bis = +raster.dataset.bis;
+  let ende = von * 60 + (drag.y - r.top) / PX_H * 60;
+  ende = Math.min(bis * 60, Math.round(ende / 15) * 15);
+  const dauer = Math.max(15, Math.min(720, ende - drag.start));
+  drag.el.style.height = Math.max(30, dauer / 60 * PX_H - 3) + 'px';
+  const z = drag.el.querySelector('.tl-von-bis');
+  if (z) z.textContent = zuUhr(drag.start) + '–' + zuUhr(drag.start + dauer);
+  drag.ziel = { dauer: dauer };
 }
 
 function autoScroll() {
@@ -1432,7 +1481,7 @@ function autoScroll() {
   let dy = 0;
   if (drag.y < oben) dy = -Math.max(2, Math.min(18, (oben - drag.y) / 3));
   else if (drag.y > unten) dy = Math.max(2, Math.min(18, (drag.y - unten) / 3));
-  if (dy) { window.scrollBy(0, dy); dragBewegen(); }
+  if (dy) { window.scrollBy(0, dy); bewegen(); }
   drag.raf = requestAnimationFrame(autoScroll);
 }
 
@@ -1446,27 +1495,31 @@ function dragEnde(ok) {
     return;
   }
   klickSperreBis = Date.now() + 350;
-  dd.geist.remove();
-  dd.marker.remove();
+  document.body.classList.remove('am-ziehen', 'am-dehnen');
+  if (dd.geist) dd.geist.remove();
+  if (dd.marker) dd.marker.remove();
   dd.el.classList.remove('zieht');
-  document.body.classList.remove('am-ziehen');
-  document.querySelectorAll('.tl-ablage.drop-ok').forEach(e => e.classList.remove('drop-ok'));
 
-  const p = ok && dd.ziel && sicht().programm.find(x => String(x.id) === dd.id);
-  if (p) {
-    const felder = {};
-    if (dd.ziel.ablage) {
-      if (!leer(p.uhrzeit)) felder.uhrzeit = '';
-    } else {
-      if (String(p.datum || '').slice(0, 10) !== dd.ziel.datum) felder.datum = dd.ziel.datum;
-      if (String(p.uhrzeit || '') !== dd.ziel.uhrzeit) felder.uhrzeit = dd.ziel.uhrzeit;
-    }
-    if (Object.keys(felder).length) {
-      schreiben({ aktion: 'aendern', blatt: 'Programm', id: dd.id, felder: felder });
+  const d = sicht();
+  if (ok && dd.ziel && dd.modus === 'dauer') {
+    const a = d.ablauf.find(x => String(x.id) === dd.id);
+    if (a && Math.round(zahl(a.dauer)) !== dd.ziel.dauer) {
+      schreiben({ aktion: 'aendern', blatt: 'Ablauf', id: dd.id, felder: { dauer: String(dd.ziel.dauer) } });
       return;
     }
+  } else if (ok && dd.ziel) {
+    if (dd.progId) {                                  // aus dem Programm in die Timeline
+      const p = d.programm.find(x => String(x.id) === dd.progId);
+      if (p) { ausProgramm(p, dd.ziel.uhrzeit); return; }
+    } else {
+      const a = d.ablauf.find(x => String(x.id) === dd.id);
+      if (a && String(a.uhrzeit || '') !== dd.ziel.uhrzeit) {
+        schreiben({ aktion: 'aendern', blatt: 'Ablauf', id: dd.id, felder: { uhrzeit: dd.ziel.uhrzeit } });
+        return;
+      }
+    }
   }
-  if (renderAusstehend) render();
+  render();                                          // abgebrochen/unverändert: Ansicht zurücksetzen
 }
 
 
@@ -1510,6 +1563,89 @@ pform.addEventListener('submit', ev => {
   dlg.close();
 });
 $('#dlg-abbrechen').addEventListener('click', () => dlg.close());
+
+
+/* ═══════════ Dialog: Ablauf-Eintrag ═══════════ */
+
+const dlgAbl = $('#dlg-ablauf'), aform = $('#ablauf-form');
+const AFELDER = ['titel', 'tag', 'uhrzeit', 'dauer', 'ort', 'notiz'];
+$('#tag-liste').innerHTML = TAGS.map(t => `<option value="${esc(t.name)}">`).join('');
+$('#tag-wahl').innerHTML = TAGS.map(t =>
+  `<button type="button" class="tag-pill" data-tag="${esc(t.name)}" style="--tag:${t.farbe}">${esc(t.name)}</button>`).join('');
+$('#tag-wahl').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-tag]');
+  if (b) { aform.elements.tag.value = b.dataset.tag; tagsMarkieren(); }
+});
+aform.elements.tag.addEventListener('input', tagsMarkieren);
+function tagsMarkieren() {
+  const v = aform.elements.tag.value.trim().toLowerCase();
+  aform.querySelectorAll('.tag-pill').forEach(b => b.classList.toggle('aktiv', b.dataset.tag.toLowerCase() === v));
+}
+
+function oeffneAblauf(a, vorbelegt) {
+  aform.reset();
+  aform.dataset.id = a ? String(a.id) : '';
+  $('#abl-titel').textContent = a ? 'Ablauf-Eintrag' : 'Neuer Ablauf-Eintrag';
+  const q = a || Object.assign({ tag: 'Aktivität', dauer: '60' }, vorbelegt || {});
+  AFELDER.forEach(k => { aform.elements[k].value = q[k] == null ? '' : String(q[k]); });
+  const prog = a && a.programmId ? sicht().programm.find(p => String(p.id) === String(a.programmId)) : null;
+  $('#abl-link').textContent = prog ? `Verknüpft mit dem Programmpunkt „${prog.titel}“.` : '';
+  $('#abl-loeschen').hidden = !a;
+  tagsMarkieren();
+  dlgAbl.showModal();
+  if (!a) aform.elements.titel.focus();
+}
+
+aform.addEventListener('submit', ev => {
+  ev.preventDefault();
+  const felder = {};
+  AFELDER.forEach(k => { felder[k] = String(aform.elements[k].value || '').trim(); });
+  if (!felder.titel) { aform.elements.titel.focus(); toast('Bitte einen Titel eingeben.', true); return; }
+  if (felder.dauer) felder.dauer = String(Math.max(15, Math.min(720, Math.round(zahl(felder.dauer)))));
+  const id = aform.dataset.id;
+  if (!id) {
+    schreiben({ aktion: 'neu', blatt: 'Ablauf', id: uuid(), felder: felder });
+  } else {
+    const alt = sicht().ablauf.find(x => String(x.id) === id) || {};
+    const diff = {};
+    AFELDER.forEach(k => { if (String(alt[k] == null ? '' : alt[k]) !== felder[k]) diff[k] = felder[k]; });
+    if (Object.keys(diff).length) schreiben({ aktion: 'aendern', blatt: 'Ablauf', id: id, felder: diff });
+  }
+  dlgAbl.close();
+});
+
+$('#abl-loeschen').addEventListener('click', () => {
+  const id = aform.dataset.id;
+  if (id && confirm('Diesen Eintrag aus dem Ablauf entfernen?')) {
+    schreiben({ aktion: 'loeschen', blatt: 'Ablauf', id: id });
+    dlgAbl.close();
+  }
+});
+
+
+/* ═══════════ Dialog: Wann & wo ═══════════ */
+
+const dlgJga = $('#dlg-jga'), jform = $('#jga-form');
+const JFELDER = ['jgaDatum', 'startZeit', 'startOrt'];
+function oeffneJga() {
+  const e = sicht().einstellungen;
+  JFELDER.forEach(k => { jform.elements[k].value = e[k] == null ? '' : String(e[k]); });
+  dlgJga.showModal();
+}
+jform.addEventListener('submit', ev => {
+  ev.preventDefault();
+  const e = sicht().einstellungen;
+  JFELDER.forEach(k => {
+    const v = String(jform.elements[k].value || '').trim();
+    if (String(e[k] == null ? '' : e[k]) !== v) schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: k, wert: v });
+  });
+  dlgJga.close();
+});
+
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-schliessen]');
+  if (b) b.closest('dialog').close();
+});
 
 
 /* ═══════════ QR-Code ═══════════ */
