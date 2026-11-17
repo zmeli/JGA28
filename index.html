@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>JGA-Planer</title>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<style>
+:root{
+  --bg:#FFF4F7; --card:#FFFFFF; --ink:#2A1621; --soft:#6F5763; --line:#F1D6E1;
+  --primary:#C2185B; --primary-ink:#FFFFFF; --primary-soft:#FCE4EE;
+  --ok:#2E7D32; --ok-soft:#E6F4E7; --warn:#A15C00; --warn-soft:#FEF1D6; --danger:#C62828;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#170E13; --card:#221520; --ink:#F7EAF0; --soft:#BBA3B0; --line:#3A2633;
+    --primary:#FF5C9A; --primary-ink:#2A0A17; --primary-soft:#3A1A2A;
+    --ok:#6BCB77; --ok-soft:#1D3321; --warn:#F5B041; --warn-soft:#3A2A0A; --danger:#FF6B6B;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+a{color:var(--primary)}
+h1,h2,h3{line-height:1.2;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:.6rem .75rem;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+textarea{resize:vertical}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+input[type=range]{padding:0;border:0;background:none;accent-color:var(--primary)}
+input[type=checkbox]{width:auto;accent-color:var(--primary)}
+label{display:grid;gap:.25rem;font-size:.9rem;font-weight:600}
+label.check{display:flex;align-items:center;gap:.45rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.55rem 1rem;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;font-weight:600;white-space:nowrap}
+.btn:hover{border-color:var(--primary)}
+.btn:disabled{opacity:.6;cursor:default}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.btn.small{padding:.35rem .8rem;font-size:.875rem}
+.btn.gefahr{color:var(--danger)}
+.btn.aktiv{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+.btn.voll{width:100%;padding:.8rem}
+.link-btn{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font-weight:600}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:1.15rem;line-height:1;list-style:none}
+.icon-btn::-webkit-details-marker{display:none}
+
+/* Passwort-Seite: bewusst leer */
+#gate{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:16px}
+.gate-box{width:100%;max-width:300px;display:grid;gap:.6rem}
+.gate-msg{min-height:1.4em;margin:0;color:var(--danger);font-size:.9rem;text-align:center}
+
+.kopf{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:.6rem 16px 0}
+.kopf-zeile{display:flex;align-items:center;gap:.5rem;max-width:860px;margin:0 auto}
+.kopf h1{flex:1;min-width:0;font-size:1.3rem;font-weight:800;color:var(--primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync{font-size:.8rem;color:var(--soft)}
+.sync.fehler{color:var(--danger)}
+.tabs{display:flex;gap:.25rem;max-width:860px;margin:.4rem auto 0;overflow-x:auto;scrollbar-width:none}
+.tabs a{padding:.5rem .75rem;text-decoration:none;color:var(--soft);font-weight:700;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs a.aktiv{color:var(--primary);border-color:var(--primary)}
+.menu{position:relative}
+.menu-liste{position:absolute;right:0;top:46px;z-index:10;min-width:220px;display:grid;padding:.4rem;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgb(0 0 0 / .15)}
+.menu-liste button{text-align:left;background:none;border:0;padding:.6rem .7rem;border-radius:8px;cursor:pointer}
+.menu-liste button:hover{background:var(--primary-soft)}
+.menu-name{padding:.4rem .7rem;font-size:.85rem;color:var(--soft)}
+main{max-width:860px;margin:0 auto;padding:16px 16px 96px}
+
+.budget{background:var(--primary);color:var(--primary-ink);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem}
+.budget .gross{font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums}
+.budget-neben{font-size:.92rem;margin-top:.15rem;opacity:.92}
+.toolbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1rem}
+.toolbar select{width:auto;flex:1 1 130px}
+
+.karte{display:flex;gap:.9rem;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;margin-bottom:.8rem}
+.karte.st-fix{border-left:5px solid var(--ok)}
+.karte.st-nein{opacity:.55}
+.karte.wartet{opacity:.55}
+.score{flex:0 0 58px;height:58px;border-radius:999px;display:grid;place-content:center;text-align:center;background:var(--primary-soft);color:var(--primary);font-weight:800;font-size:1.25rem;line-height:1.05}
+.score small{display:block;font-size:.62rem;font-weight:600;color:var(--soft)}
+.inhalt{flex:1;min-width:0}
+.karte h3{font-size:1.1rem;margin-bottom:.4rem;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem}
+.chip{font-size:.78rem;padding:.15rem .55rem;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--soft)}
+.chip.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent;font-weight:700}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent;font-weight:700}
+.beschreibung{margin:.3rem 0 .4rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.extlink{font-size:.9rem;overflow-wrap:anywhere}
+.balken{display:grid;gap:.28rem;margin:.6rem 0}
+.balken-zeile{display:grid;grid-template-columns:minmax(0,9.5rem) 1fr 2.2rem;gap:.5rem;align-items:center;font-size:.8rem;color:var(--soft)}
+.balken-zeile span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.balken-spur{height:8px;background:var(--bg);border-radius:999px;overflow:hidden}
+.balken-fuell{height:100%;border-radius:999px}
+.balken-zeile b{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.aktionen{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+.aktionen select{width:auto;padding:.35rem .7rem;border-radius:999px;font-size:.875rem;font-weight:600}
+details.klapp{margin-top:.6rem;border-top:1px solid var(--line);padding-top:.5rem}
+details.klapp>summary{cursor:pointer;color:var(--soft);font-size:.9rem;font-weight:700}
+.liste{list-style:none;padding:0;margin:.5rem 0;display:grid;gap:.5rem;font-size:.92rem}
+.liste li{overflow-wrap:anywhere}
+.zeit,.klein{font-size:.78rem;color:var(--soft)}
+.inline-form{display:flex;gap:.4rem;margin-top:.4rem}
+.inline-form input{flex:1;min-width:0}
+.mini{background:none;border:0;color:var(--soft);cursor:pointer;padding:0 .35rem;font-size:1rem}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem}
+.panel h2{font-size:1.25rem;margin-bottom:.3rem}
+.soft{color:var(--soft)}
+.leer{color:var(--soft);text-align:center;padding:2rem 0}
+.zurueck{display:inline-block;margin-bottom:.6rem;font-weight:600;text-decoration:none}
+.regler{margin:1.1rem 0}
+.regler-kopf{display:flex;justify-content:space-between;gap:.5rem;font-weight:700}
+.regler-kopf output{color:var(--primary);font-weight:800;font-size:1.1rem}
+.regler-skala{display:flex;justify-content:space-between;gap:.5rem;font-size:.78rem;color:var(--soft)}
+.tag{margin:1.1rem 0 .3rem;font-size:1rem;color:var(--primary)}
+.tag:first-child{margin-top:0}
+.slot{display:grid;grid-template-columns:3.6rem 1fr;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--line)}
+.slot:last-child{border-bottom:0}
+.slot-zeit{font-weight:800;font-variant-numeric:tabular-nums}
+.idee .stimme{flex:0 0 auto;min-width:3.6rem}
+.idee-text{font-weight:600;overflow-wrap:anywhere}
+
+dialog{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);color:var(--ink);padding:0;width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px)}
+dialog::backdrop{background:rgb(0 0 0 / .45)}
+dialog form{padding:1.1rem;display:grid;gap:.75rem}
+dialog h2{font-size:1.2rem}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media (max-width:440px){.zwei{grid-template-columns:1fr}}
+.dlg-aktionen{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.5rem}
+details.orga-details>summary{cursor:pointer;font-weight:700;color:var(--soft)}
+details.orga-details[open]>summary{margin-bottom:.6rem}
+.orga-felder{display:grid;gap:.6rem}
+#qr-box{justify-self:center;background:#fff;padding:12px;border-radius:10px;min-height:244px;min-width:244px;display:grid;place-items:center;color:#333;text-align:center;font-size:.85rem}
+.qr-link{margin:0;font-size:.8rem;overflow-wrap:anywhere;color:var(--soft);text-align:center}
+#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 32px);background:var(--ink);color:var(--bg);padding:.7rem 1rem;border-radius:12px;font-size:.92rem;z-index:50;box-shadow:0 8px 24px rgb(0 0 0 / .25)}
+#toast.fehler{background:var(--danger);color:#fff}
+</style>
+</head>
+<body>
+
+<!-- Passwort-Seite -->
+<div id="gate" hidden>
+  <form id="gate-form" class="gate-box">
+    <input id="gate-pw" type="password" placeholder="Passwort" autocomplete="current-password" aria-label="Passwort">
+    <input id="gate-name" type="text" placeholder="Dein Name" maxlength="40" autocomplete="nickname" aria-label="Dein Name">
+    <button id="gate-btn" class="btn primary" type="submit">Weiter</button>
+    <p id="gate-msg" class="gate-msg" role="alert"></p>
+  </form>
+</div>
+
+<!-- App -->
+<div id="app" hidden>
+  <header class="kopf">
+    <div class="kopf-zeile">
+      <h1 id="titel">JGA-Planer</h1>
+      <span id="sync" class="sync" aria-live="polite"></span>
+      <button id="btn-neuladen" class="icon-btn" type="button" title="Neu laden" aria-label="Neu laden">↻</button>
+      <details class="menu" id="menu">
+        <summary class="icon-btn" aria-label="Menü">⋯</summary>
+        <div class="menu-liste">
+          <div class="menu-name" id="menu-name"></div>
+          <button type="button" data-menu="name">Namen ändern</button>
+          <button type="button" data-menu="titel">Titel ändern</button>
+          <button type="button" data-menu="qr">QR-Code zu dieser Seite</button>
+          <button type="button" data-menu="abmelden">Abmelden</button>
+        </div>
+      </details>
+    </div>
+    <nav class="tabs">
+      <a href="#programm">Programm</a>
+      <a href="#ablauf">Ablauf</a>
+      <a href="#ideen">Ideen</a>
+      <a href="#zusagen">Zusagen</a>
+    </nav>
+  </header>
+  <main id="view"></main>
+</div>
+
+<dialog id="dlg-programm">
+  <form id="programm-form" novalidate>
+    <h2 id="dlg-titel">Neuer Eintrag</h2>
+    <label>Titel *<input name="titel" maxlength="200" required></label>
+    <div class="zwei">
+      <label>Kategorie<select name="kategorie"></select></label>
+      <label>Status<select name="status"></select></label>
+    </div>
+    <div class="zwei">
+      <label>Datum<input name="datum" type="date"></label>
+      <label>Uhrzeit<input name="uhrzeit" type="time"></label>
+    </div>
+    <div class="zwei">
+      <label>Dauer<input name="dauer" placeholder="z. B. 2 h" maxlength="50"></label>
+      <label>Ort<input name="ort" maxlength="200"></label>
+    </div>
+    <div class="zwei">
+      <label>Kosten pro Person (€)<input name="kosten" type="number" min="0" step="0.01" inputmode="decimal"></label>
+      <label>Max. Personen<input name="maxPersonen" type="number" min="1" step="1" inputmode="numeric"></label>
+    </div>
+    <label>Link<input name="link" inputmode="url" placeholder="https://…" maxlength="1000"></label>
+    <label>Beschreibung<textarea name="beschreibung" rows="3" maxlength="5000"></textarea></label>
+    <details class="orga-details">
+      <summary>Orga-Einschätzung (optional)</summary>
+      <div class="orga-felder" id="orga-felder"></div>
+    </details>
+    <div class="dlg-aktionen">
+      <button type="button" class="btn" id="dlg-abbrechen">Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-qr">
+  <form method="dialog">
+    <h2 id="qr-titel">QR-Code</h2>
+    <div id="qr-box"></div>
+    <p class="qr-link" id="qr-link"></p>
+    <p class="klein" style="margin:0;text-align:center">Zum Öffnen braucht man das Passwort.</p>
+    <div class="dlg-aktionen">
+      <button type="button" class="btn" id="qr-kopieren">Link kopieren</button>
+      <button type="submit" class="btn primary">Schließen</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" hidden></div>
+
+<script>
+'use strict';
+
+/* ═══════════ Konfiguration ═══════════ */
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrmUHSWC2L74sO5kh6u6i4dymB-rk1qsu-JJZPTEjGzbVlfKfDSjPtVPHYLPcncCAbXg/exec';
+
+const KATEGORIEN = ['Aktivität', 'Essen', 'Übernachtung', 'Deko', 'Spiel', 'Überraschung'];
+const STATUS = ['Idee', 'Fix gebucht', 'Abgelehnt'];
+
+// Von allen bewertbar, zählt in den Score. „invertiert": hoher Wert senkt den Score.
+const KRITERIEN = [
+  { key: 'spass',           label: 'Spaßfaktor',       low: 'Nett',           high: 'Legendär',                  color: '#E8467C' },
+  { key: 'brautpassend',    label: 'Passt zur Braut',  low: 'Gar nicht',      high: 'Wie für sie gemacht',       color: '#9B5DE5' },
+  { key: 'gruppentauglich', label: 'Gruppentauglich',  low: 'Nur für Mutige', high: 'Alle machen mit',           color: '#E0A100' },
+  { key: 'erinnerungswert', label: 'Erinnerungswert',  low: 'Vergisst man',   high: 'Erzählt man in 10 Jahren', color: '#14A89A' },
+  { key: 'peinlichkeit',    label: 'Peinlichkeit',     low: 'Harmlos',        high: 'Grenzwertig',               color: '#7A8696', invertiert: true }
+];
+
+// Einschätzung beim Anlegen/Bearbeiten, zählt nicht in den Score.
+const ORGA = [
+  { key: 'aufwand',     label: 'Planungsaufwand',     low: 'Albtraum',      high: 'Ein Anruf' },
+  { key: 'wetterfest',  label: 'Wetterunabhängig',    low: 'Nur bei Sonne', high: 'Egal' },
+  { key: 'vorlaufzeit', label: 'Kurzfristig machbar', low: 'Monate vorher', high: 'Spontan' }
+];
+
+const BLATT = {
+  Programm:    { key: 'programm',    autor: 'erstelltVon', zeit: 'createdAt',   kinder: [['bewertungen', 'programmId'], ['kommentare', 'programmId']] },
+  Bewertungen: { key: 'bewertungen', autor: 'wer',  zeit: 'zeitstempel' },
+  Vorschlaege: { key: 'vorschlaege', autor: 'wer',  zeit: 'zeitstempel', kinder: [['stimmen', 'vorschlagId']] },
+  Stimmen:     { key: 'stimmen',     autor: 'wer',  zeit: 'zeitstempel' },
+  Kommentare:  { key: 'kommentare',  autor: 'wer',  zeit: 'zeitstempel' },
+  Teilnehmer:  { key: 'teilnehmer',  autor: 'name', zeit: 'zeitstempel' }
+};
+
+const PFELDER = ['titel', 'kategorie', 'status', 'datum', 'uhrzeit', 'dauer', 'ort', 'kosten', 'maxPersonen',
+                 'link', 'beschreibung', 'aufwand', 'wetterfest', 'vorlaufzeit'];
+const FELD_LABEL = { titel: 'Titel', kategorie: 'Kategorie', status: 'Status', datum: 'Datum', uhrzeit: 'Uhrzeit',
+  dauer: 'Dauer', ort: 'Ort', kosten: 'Kosten', maxPersonen: 'Max. Personen', link: 'Link', beschreibung: 'Beschreibung',
+  aufwand: 'Planungsaufwand', wetterfest: 'Wetterunabhängig', vorlaufzeit: 'Kurzfristig machbar' };
+
+
+/* ═══════════ Zustand ═══════════ */
+
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+let pw = lsGet('jga_pw') || '';
+let name = lsGet('jga_name') || '';
+let server = null;                      // letzte Serverantwort { gen, ops, daten }
+try { server = JSON.parse(lsGet('jga_daten') || 'null'); } catch (e) {}
+let pending = [];                       // noch nicht bestätigte Schreibvorgänge
+let wartend = new Set();
+let offline = false;
+let zuletztGeholt = 0;
+let anfrageNr = 0, angewendetNr = 0;
+let renderAusstehend = false;
+let springeZu = '';
+const offen = new Set();                // aufgeklappte <details>
+const filter = { kat: '', status: '', sort: 'score', nurFix: true };
+try { Object.assign(filter, JSON.parse(lsGet('jga_filter') || '{}')); } catch (e) {}
+
+
+/* ═══════════ Helfer ═══════════ */
+
+const $ = (s, el) => (el || document).querySelector(s);
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ESC[c]); }
+function uuid() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+}
+function zahl(v) { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(n) ? 0 : n; }
+function leer(v) { return v == null || String(v).trim() === ''; }
+function normName(s) { return String(s || '').trim().toLowerCase(); }
+const EUR = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+function euro(n) { return EUR.format(n); }
+function f1(n) { return n.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+function datumObj(iso) { return new Date(String(iso).slice(0, 10) + 'T12:00:00'); }
+function istDatum(s) { return /^\d{4}-\d{2}-\d{2}/.test(String(s || '')); }
+function datumLang(iso) { return istDatum(iso) ? datumObj(iso).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) : String(iso); }
+function datumKurz(iso) { return istDatum(iso) ? datumObj(iso).toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) : String(iso); }
+function zeitpunkt(iso) {
+  const d = new Date(iso);
+  return isNaN(d) ? '' : d.toLocaleString('de-DE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+function sicherUrl(u) {
+  u = String(u || '').trim();
+  if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  return u;
+}
+function seitenLink(hash) { return location.origin + location.pathname + '#' + hash; }
+function schlafen(ms) { return new Promise(r => setTimeout(r, ms)); }
+function istEingabe(el) { return el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName); }
+
+let toastTimer;
+function toast(msg, fehler) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = fehler ? 'fehler' : '';
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, fehler ? 7000 : 2500);
+}
+window.addEventListener('error', ev => toast('Fehler: ' + (ev.message || 'unbekannt'), true));
+window.addEventListener('unhandledrejection', ev => toast('Fehler: ' + ((ev.reason && ev.reason.message) || ev.reason), true));
+
+
+/* ═══════════ Server: Lesen ═══════════ */
+
+async function anfrage(passwort) {
+  const r = await fetch(APPS_SCRIPT_URL + '?pw=' + encodeURIComponent(passwort) + '&t=' + Date.now(), { cache: 'no-store' });
+  const txt = await r.text();
+  try { return JSON.parse(txt); }
+  catch (e) { throw new Error('Server liefert keine Daten – Bereitstellung prüfen („Jeder" + neue Version?).'); }
+}
+
+/** Holt alle Daten. Ältere Antworten überschreiben nie neuere. */
+async function holen() {
+  const nr = ++anfrageNr;
+  try {
+    const b = await anfrage(pw);
+    if (!b.ok) {
+      if (b.fehler === 'passwort') abmelden('Das Passwort stimmt nicht mehr – bitte neu eingeben.');
+      else toast('Server: ' + b.fehler, true);
+      return null;
+    }
+    offline = false;
+    zuletztGeholt = Date.now();
+    if (nr < angewendetNr) return b;
+    angewendetNr = nr;
+    server = b;
+    lsSet('jga_daten', JSON.stringify(b));
+    abgleichen(b);
+    aktualisieren();
+    return b;
+  } catch (e) {
+    offline = true;
+    syncAnzeigen();
+    return null;
+  }
+}
+
+
+/* ═══════════ Server: Schreiben ═══════════ */
+
+/**
+ * Schreiben ist „optimistisch": die Änderung erscheint sofort, wird im Hintergrund
+ * gesendet und danach am Server-Stand überprüft (über die opId).
+ */
+function schreiben(op) {
+  op.opId = uuid();
+  op.ts = new Date().toISOString();
+  op.status = 'wartet';
+  op.versuche = 0;
+  pending.push(op);
+  render();
+  pumpe();
+}
+
+let pumpeAktiv = false;
+async function pumpe() {
+  if (pumpeAktiv) return;
+  pumpeAktiv = true;
+  try {
+    while (pending.length) {
+      // der Reihe nach senden (Bearbeiten nach Anlegen muss danach ankommen)
+      for (const op of pending.filter(o => o.status === 'wartet')) {
+        op.versuche++;
+        try { await postToSheet(nutzlast(op)); } catch (e) { /* Prüfung entscheidet */ }
+        op.status = 'gesendet';
+      }
+      // ein Abruf prüft alle gesendeten auf einmal
+      for (const ms of [100, 1500, 3500]) {
+        await schlafen(ms);
+        await holen();
+        if (!pending.some(o => o.status === 'gesendet')) break;
+      }
+      let geaendert = false;
+      pending.filter(o => o.status === 'gesendet').forEach(o => {
+        if (o.versuche < 2) { o.status = 'wartet'; return; }   // nochmal senden (idempotent)
+        pending = pending.filter(x => x !== o);
+        geaendert = true;
+        toast('Konnte nicht gespeichert werden. Bitte Verbindung prüfen und nochmal versuchen.', true);
+      });
+      if (geaendert) aktualisieren();
+    }
+  } finally {
+    pumpeAktiv = false;
+    syncAnzeigen();
+  }
+}
+
+function abgleichen(b) {
+  const ops = b.ops || {};
+  pending = pending.filter(o => {
+    if (o.status !== 'gesendet' || !(o.opId in ops)) return true;
+    if (ops[o.opId] !== 'ok') toast('Nicht gespeichert: ' + ops[o.opId], true);
+    return false;
+  });
+}
+
+function nutzlast(op) {
+  return { pw: pw, wer: name, opId: op.opId, aktion: op.aktion, blatt: op.blatt, id: op.id, felder: op.felder, wert: op.wert };
+}
+
+/** POST über verstecktes Formular → kein CORS-Problem. Antwort ist nicht lesbar. */
+function postToSheet(payload) {
+  return new Promise((resolve, reject) => {
+    const frameName = 'f_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    const iframe = document.createElement('iframe');
+    iframe.name = frameName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = frameName;
+    form.style.display = 'none';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+    document.body.appendChild(form);
+
+    let fertig = false;
+    const aufraeumen = () => { form.remove(); setTimeout(() => iframe.remove(), 500); };
+    iframe.addEventListener('load', () => {
+      // das leere about:blank-Laden mancher Browser ignorieren
+      try { if (iframe.contentWindow.location.href === 'about:blank') return; } catch (e) { /* fremde Domain = echte Antwort */ }
+      if (fertig) return;
+      fertig = true; aufraeumen(); resolve();
+    });
+    setTimeout(() => {
+      if (fertig) return;
+      fertig = true; aufraeumen(); reject(new Error('Zeitüberschreitung'));
+    }, 20000);
+    form.submit();
+  });
+}
+
+
+/* ═══════════ Daten aufbereiten ═══════════ */
+
+/** Serverstand + noch ausstehende eigene Änderungen. */
+function sicht() {
+  const d = JSON.parse(JSON.stringify((server && server.daten) || {}));
+  ['programm', 'bewertungen', 'vorschlaege', 'stimmen', 'kommentare', 'teilnehmer', 'verlauf']
+    .forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
+  if (!d.einstellungen || Array.isArray(d.einstellungen)) d.einstellungen = {};
+  pending.forEach(op => anwenden(d, op));
+  return d;
+}
+
+function anwenden(d, op) {
+  if (op.aktion === 'setzen') { d.einstellungen[op.id] = op.wert; return; }
+  const b = BLATT[op.blatt];
+  const liste = d[b.key];
+  if (op.aktion === 'neu') {
+    if (liste.some(r => String(r.id) === op.id)) return;
+    const r = Object.assign({}, op.felder, { id: op.id });
+    r[b.autor] = name;
+    r[b.zeit] = op.ts;
+    liste.push(r);
+  } else if (op.aktion === 'aendern') {
+    const r = liste.find(x => String(x.id) === op.id);
+    if (r) Object.assign(r, op.felder);
+  } else if (op.aktion === 'loeschen') {
+    d[b.key] = liste.filter(x => String(x.id) !== op.id);
+    (b.kinder || []).forEach(([k, f]) => { d[k] = d[k].filter(x => String(x[f]) !== op.id); });
+  }
+}
+
+/** Anhänge-Logs: pro Schlüssel gilt der neueste Eintrag. */
+function neuesteJe(liste, keyFn) {
+  const m = new Map();
+  liste.forEach(r => {
+    const k = keyFn(r), alt = m.get(k);
+    if (!alt || String(r.zeitstempel) >= String(alt.zeitstempel)) m.set(k, r);
+  });
+  return [...m.values()];
+}
+function bewertungenVon(d, pid) {
+  return neuesteJe(d.bewertungen.filter(b => String(b.programmId) === pid), b => normName(b.wer));
+}
+function zusagen(d) { return neuesteJe(d.teilnehmer, r => normName(r.name)); }
+function gruppe(d) { const g = parseInt(d.einstellungen.gruppengroesse, 10); return g > 0 ? g : 0; }
+
+function score(bews) {
+  const avg = {};
+  let summe = 0, anz = 0;
+  KRITERIEN.forEach(k => {
+    const w = bews.map(b => b[k.key]).filter(v => !leer(v) && !isNaN(v)).map(Number);
+    if (!w.length) return;
+    const a = w.reduce((s, x) => s + x, 0) / w.length;
+    avg[k.key] = a;
+    summe += k.invertiert ? 7 - a : a;
+    anz++;
+  });
+  return { bews: bews, avg: avg, wert: anz ? summe / anz / 7 * 10 : null };
+}
+
+
+/* ═══════════ Rendering ═══════════ */
+
+const view = $('#view');
+
+function route() {
+  let h = location.hash.replace(/^#/, '');
+  try { h = decodeURIComponent(h); } catch (e) {}
+  const i = h.indexOf('/');
+  const n = i === -1 ? h : h.slice(0, i);
+  const arg = i === -1 ? '' : h.slice(i + 1);
+  return { name: VIEWS[n] ? n : 'programm', arg: arg };
+}
+
+function render() {
+  const r = route();
+  document.querySelectorAll('.tabs a').forEach(a =>
+    a.classList.toggle('aktiv', a.getAttribute('href') === '#' + (r.name === 'bewerten' ? 'programm' : r.name)));
+  wartend = new Set(pending.map(o => String(o.id)));
+  syncAnzeigen();
+  $('#menu-name').textContent = 'Angemeldet als ' + name;
+  if (!server) { view.innerHTML = '<p class="leer">Lädt…</p>'; return; }
+  const d = sicht();
+  const titel = d.einstellungen.titel || 'JGA-Planer';
+  $('#titel').textContent = titel;
+  document.title = titel;
+  view.innerHTML = VIEWS[r.name](d, r.arg);
+  renderAusstehend = false;
+  if (springeZu) {
+    const el = document.getElementById('p-' + springeZu);
+    springeZu = '';
+    if (el) el.scrollIntoView({ block: 'center' });
+  }
+}
+
+/** Neue Serverdaten anzeigen – ohne jemandem die Eingabe unter den Fingern wegzureißen. */
+function aktualisieren() {
+  syncAnzeigen();
+  if (route().name === 'bewerten' && $('#bew-form', view)) return;
+  if (istEingabe(document.activeElement) && view.contains(document.activeElement)) { renderAusstehend = true; return; }
+  render();
+}
+view.addEventListener('focusout', () => {
+  if (!renderAusstehend) return;
+  setTimeout(() => {
+    const a = document.activeElement;
+    if (renderAusstehend && !(istEingabe(a) && view.contains(a))) render();
+  }, 400);
+});
+
+function syncAnzeigen() {
+  const s = $('#sync');
+  const n = pending.length;
+  s.textContent = n ? 'Speichert… ' + n : (offline ? 'offline' : '');
+  s.classList.toggle('fehler', !n && offline);
+}
+
+function chip(t, cls) { return `<span class="chip${cls ? ' ' + cls : ''}">${esc(t)}</span>`; }
+function klapp(key, summary, inhalt) {
+  return `<details class="klapp" data-key="${esc(key)}"${offen.has(key) ? ' open' : ''}><summary>${summary}</summary>${inhalt}</details>`;
+}
+function balken(label, wert, max, color, titel) {
+  return `<div class="balken-zeile"${titel ? ` title="${esc(titel)}"` : ''}><span>${esc(label)}</span>
+    <div class="balken-spur"><div class="balken-fuell" style="width:${Math.round(wert / max * 100)}%;background:${color}"></div></div>
+    <b>${f1(wert)}</b></div>`;
+}
+
+const VIEWS = { programm: viewProgramm, ablauf: viewAblauf, ideen: viewIdeen, zusagen: viewZusagen, bewerten: viewBewerten };
+
+/* ── Programm ── */
+function viewProgramm(d) {
+  const g = gruppe(d);
+  const ja = zusagen(d).filter(z => z.zusage === 'ja').length;
+  const fix = d.programm.filter(p => p.status === 'Fix gebucht');
+  const pp = fix.reduce((s, p) => s + zahl(p.kosten), 0);
+
+  let html = `<section class="budget">
+    <div><span class="gross">${euro(pp)}</span> pro Person verplant</div>
+    <div class="budget-neben">${g ? euro(pp * g) + ' gesamt bei ' : ''}<button type="button" class="link-btn" data-act="gruppe">${g ? g + ' Personen' : 'Gruppengröße festlegen'}</button>
+      · ${ja} Zusage${ja === 1 ? '' : 'n'} · ${fix.length} fix gebucht</div>
+  </section>
+  <div class="toolbar">
+    <button type="button" class="btn primary" data-act="neu">+ Neuer Eintrag</button>
+    <select data-filter="kat" aria-label="Kategorie"><option value="">Alle Kategorien</option>
+      ${KATEGORIEN.map(k => `<option${filter.kat === k ? ' selected' : ''}>${esc(k)}</option>`).join('')}</select>
+    <select data-filter="status" aria-label="Status"><option value="">Alle Status</option>
+      <option value="!Abgelehnt"${filter.status === '!Abgelehnt' ? ' selected' : ''}>Ohne Abgelehnte</option>
+      ${STATUS.map(s => `<option${filter.status === s ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select>
+    <select data-filter="sort" aria-label="Sortierung">
+      ${[['score', 'Beste zuerst'], ['datum', 'Nach Termin'], ['kosten', 'Günstigste zuerst'], ['neu', 'Neueste zuerst']]
+        .map(([v, l]) => `<option value="${v}"${filter.sort === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+  </div>`;
+
+  let liste = d.programm.slice();
+  if (filter.kat) liste = liste.filter(p => p.kategorie === filter.kat);
+  if (filter.status === '!Abgelehnt') liste = liste.filter(p => p.status !== 'Abgelehnt');
+  else if (filter.status) liste = liste.filter(p => (p.status || 'Idee') === filter.status);
+
+  const sc = new Map(liste.map(p => [String(p.id), score(bewertungenVon(d, String(p.id)))]));
+  const termin = p => (p.datum || '9999') + (p.uhrzeit || '99');
+  const vergl = {
+    score: (a, b) => (sc.get(String(b.id)).wert ?? -1) - (sc.get(String(a.id)).wert ?? -1),
+    datum: (a, b) => termin(a).localeCompare(termin(b)),
+    kosten: (a, b) => zahl(a.kosten) - zahl(b.kosten),
+    neu: (a, b) => String(b.createdAt).localeCompare(String(a.createdAt))
+  }[filter.sort] || (() => 0);
+  liste.sort((a, b) => ((a.status === 'Abgelehnt') - (b.status === 'Abgelehnt')) || vergl(a, b));
+
+  if (!liste.length) {
+    return html + `<p class="leer">${d.programm.length ? 'Nichts passt zum Filter.' : 'Noch keine Einträge – leg den ersten an!'}</p>`;
+  }
+  return html + liste.map(p => karte(p, d, sc.get(String(p.id)))).join('');
+}
+
+function karte(p, d, sc) {
+  const id = String(p.id);
+  const ich = normName(name);
+  const meine = sc.bews.find(b => normName(b.wer) === ich);
+  const g = gruppe(d);
+  const maxP = parseInt(p.maxPersonen, 10);
+  const st = p.status === 'Fix gebucht' ? ' st-fix' : p.status === 'Abgelehnt' ? ' st-nein' : '';
+
+  const chips = [];
+  if (p.status === 'Fix gebucht') chips.push(chip('✓ Fix gebucht', 'ok'));
+  if (p.kategorie) chips.push(chip(p.kategorie));
+  if (p.datum) chips.push(chip(datumKurz(p.datum) + (p.uhrzeit ? ', ' + p.uhrzeit : '')));
+  else if (p.uhrzeit) chips.push(chip(p.uhrzeit + ' Uhr'));
+  if (p.dauer) chips.push(chip('⏱ ' + p.dauer));
+  if (p.ort) chips.push(chip('📍 ' + p.ort));
+  if (!leer(p.kosten)) chips.push(chip(euro(zahl(p.kosten)) + ' p. P.'));
+  if (maxP > 0) chips.push(g > maxP ? chip(`⚠ max. ${maxP} Pers. – ihr seid ${g}`, 'warn') : chip('max. ' + maxP + ' Pers.'));
+
+  const bars = KRITERIEN.filter(k => sc.avg[k.key] !== undefined)
+    .map(k => balken(k.label + (k.invertiert ? ' ↓' : ''), sc.avg[k.key], 7, k.color,
+      k.invertiert ? 'Zieht den Score runter, je höher' : `${k.low} → ${k.high}`)).join('');
+  const orga = ORGA.filter(o => !leer(p[o.key]))
+    .map(o => balken(o.label, zahl(p[o.key]), 7, 'var(--soft)', `${o.low} → ${o.high}`)).join('');
+
+  const kom = d.kommentare.filter(k => String(k.programmId) === id)
+    .sort((a, b) => String(a.zeitstempel).localeCompare(String(b.zeitstempel)));
+  const ver = d.verlauf.filter(v => String(v.programmId) === id).reverse();
+  const link = sicherUrl(p.link);
+
+  return `<article class="karte${st}${wartend.has(id) ? ' wartet' : ''}" id="p-${esc(id)}">
+    <div class="score" title="Score 0–10 aus allen Bewertungen">${sc.wert == null ? '–' : f1(sc.wert)}<small>${sc.bews.length} Bew.</small></div>
+    <div class="inhalt">
+      <h3>${esc(p.titel)}</h3>
+      <div class="chips">${chips.join('')}</div>
+      ${p.beschreibung ? `<p class="beschreibung">${esc(p.beschreibung)}</p>` : ''}
+      ${link ? `<a class="extlink" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${esc(String(p.link).replace(/^https?:\/\//i, '').slice(0, 60))} ↗</a>` : ''}
+      ${bars ? `<div class="balken">${bars}</div>` : ''}
+      ${orga ? `<div class="balken">${orga}</div>` : ''}
+      <div class="aktionen">
+        <a class="btn small primary" href="#bewerten/${encodeURIComponent(id)}">${meine ? 'Bewertung ändern' : 'Bewerten'}</a>
+        <select data-act="status" data-id="${esc(id)}" aria-label="Status">
+          ${STATUS.map(s => `<option${(p.status || 'Idee') === s ? ' selected' : ''}>${s}</option>`).join('')}</select>
+        <button type="button" class="btn small" data-act="bearbeiten" data-id="${esc(id)}">Bearbeiten</button>
+        <button type="button" class="btn small" data-act="qr" data-hash="bewerten/${esc(encodeURIComponent(id))}" data-titel="${esc(p.titel)}">QR</button>
+        <button type="button" class="btn small gefahr" data-act="loeschen" data-id="${esc(id)}">Löschen</button>
+      </div>
+      ${sc.bews.length ? klapp('b:' + id, `Bewertungen (${sc.bews.length})`, `<ul class="liste">${sc.bews.map(b => {
+        const s = score([b]).wert;
+        return `<li><b>${esc(b.wer)}</b> · ${s == null ? '–' : f1(s)}${b.notiz ? `<br>${esc(b.notiz)}` : ''}</li>`;
+      }).join('')}</ul>`) : ''}
+      ${klapp('k:' + id, `Kommentare (${kom.length})`, `<ul class="liste">${kom.map(k => `<li>
+          <b>${esc(k.wer)}</b> <span class="zeit">${zeitpunkt(k.zeitstempel)}</span>
+          ${normName(k.wer) === ich ? `<button type="button" class="mini" data-act="kom-del" data-id="${esc(k.id)}" aria-label="Kommentar löschen">×</button>` : ''}
+          <br>${esc(k.text)}</li>`).join('')}</ul>
+        <form class="inline-form kom-form" data-pid="${esc(id)}">
+          <input name="text" placeholder="Kommentar…" maxlength="1000" aria-label="Kommentar">
+          <button class="btn small" type="submit">Senden</button></form>`)}
+      ${ver.length ? klapp('v:' + id, 'Verlauf', `<ul class="liste">${ver.map(v => `<li><span class="zeit">${zeitpunkt(v.zeitstempel)}</span> · <b>${esc(v.wer)}</b>
+          ${v.aktion === 'neu' ? 'hat den Eintrag angelegt' : `${esc(FELD_LABEL[v.feld] || v.feld)}: „${esc(String(v.alt).slice(0, 80)) || '–'}“ → „${esc(String(v.neu).slice(0, 80)) || '–'}“`}</li>`).join('')}</ul>`) : ''}
+    </div>
+  </article>`;
+}
+
+/* ── Bewerten ── */
+function viewBewerten(d, pid) {
+  const p = d.programm.find(x => String(x.id) === pid);
+  if (!p) return '<p class="leer">Eintrag nicht gefunden. <a href="#programm">Zum Programm</a></p>';
+  const meine = bewertungenVon(d, pid).find(b => normName(b.wer) === normName(name));
+  return `<section class="panel">
+    <a href="#programm" class="zurueck">← Programm</a>
+    <h2>${esc(p.titel)}</h2>
+    <p class="soft" style="margin:.2rem 0 0">Wie findest du das, ${esc(name)}?</p>
+    <form id="bew-form" data-pid="${esc(pid)}">
+      ${KRITERIEN.map(k => {
+        const v = meine && !leer(meine[k.key]) ? zahl(meine[k.key]) : 4;
+        return `<div class="regler">
+          <div class="regler-kopf"><label for="r-${k.key}" style="font-size:1rem">${esc(k.label)}${k.invertiert ? ' <span class="klein">(zieht ab)</span>' : ''}</label><output id="o-${k.key}">${v}</output></div>
+          <input type="range" id="r-${k.key}" name="${k.key}" min="0" max="7" step="1" value="${v}">
+          <div class="regler-skala"><span>${esc(k.low)}</span><span>${esc(k.high)}</span></div>
+        </div>`;
+      }).join('')}
+      <label>Notiz (optional)<textarea name="notiz" rows="2" maxlength="1000">${esc(meine ? meine.notiz : '')}</textarea></label>
+      <p style="margin:1rem 0 0"><button type="submit" class="btn primary voll">Bewertung speichern</button></p>
+    </form>
+  </section>`;
+}
+
+/* ── Ablauf ── */
+function viewAblauf(d) {
+  const nurFix = filter.nurFix !== false;
+  const liste = d.programm.filter(p => p.status !== 'Abgelehnt' && (!nurFix || p.status === 'Fix gebucht'));
+  const mit = liste.filter(p => p.datum)
+    .sort((a, b) => (a.datum + (a.uhrzeit || '99')).localeCompare(b.datum + (b.uhrzeit || '99')));
+  const ohne = liste.filter(p => !p.datum);
+  let html = `<div class="toolbar"><label class="check"><input type="checkbox" data-filter="nurFix"${nurFix ? ' checked' : ''}> Nur fix gebuchte</label></div>`;
+  if (!liste.length) {
+    return html + '<p class="leer">Noch nichts im Ablauf. Gib Einträgen ein Datum und setze sie auf „Fix gebucht“.</p>';
+  }
+  html += '<section class="panel">';
+  let tag = '';
+  mit.forEach(p => {
+    if (p.datum !== tag) { tag = p.datum; html += `<h3 class="tag">${esc(datumLang(tag))}</h3>`; }
+    html += slot(p);
+  });
+  if (ohne.length) html += '<h3 class="tag">Noch ohne Termin</h3>' + ohne.map(slot).join('');
+  return html + '</section>';
+}
+function slot(p) {
+  const info = [p.ort && '📍 ' + p.ort, p.dauer && '⏱ ' + p.dauer, !leer(p.kosten) && euro(zahl(p.kosten)) + ' p. P.']
+    .filter(Boolean).map(esc).join(' · ');
+  return `<div class="slot"><div class="slot-zeit">${esc(p.uhrzeit || '–')}</div>
+    <div><b>${esc(p.titel)}</b>${p.status !== 'Fix gebucht' ? ' ' + chip(p.status || 'Idee') : ''}
+    ${info ? `<div class="klein">${info}</div>` : ''}</div></div>`;
+}
+
+/* ── Ideen ── */
+function viewIdeen(d) {
+  const ich = normName(name);
+  const aktiv = neuesteJe(d.stimmen, s => s.vorschlagId + '|' + normName(s.wer)).filter(s => s.aktiv === 'ja');
+  const liste = d.vorschlaege.map(v => {
+    const st = aktiv.filter(s => String(s.vorschlagId) === String(v.id));
+    return { v: v, st: st, meins: st.some(s => normName(s.wer) === ich) };
+  }).sort((a, b) => b.st.length - a.st.length || String(b.v.zeitstempel).localeCompare(String(a.v.zeitstempel)));
+
+  let html = `<form class="panel inline-form" id="idee-form" style="margin-top:0">
+    <input name="text" placeholder="Neue Idee, z. B. Karaoke-Abend" maxlength="300" aria-label="Neue Idee">
+    <button type="submit" class="btn primary">Hinzufügen</button></form>`;
+  if (!liste.length) return html + '<p class="leer">Noch keine Ideen. Schreib die erste rein!</p>';
+  return html + liste.map(({ v, st, meins }) => `<article class="karte idee${wartend.has(String(v.id)) ? ' wartet' : ''}">
+    <button type="button" class="btn stimme${meins ? ' aktiv' : ''}" data-act="stimme" data-id="${esc(v.id)}" data-wert="${meins ? 'nein' : 'ja'}"
+      aria-pressed="${meins}" aria-label="Gefällt mir">♥ ${st.length}</button>
+    <div class="inhalt">
+      <div class="idee-text">${esc(v.text)}</div>
+      <div class="zeit">von ${esc(v.wer)}${st.length ? ' · ♥ ' + esc(st.map(s => s.wer).join(', ')) : ''}</div>
+      <div class="aktionen">
+        <button type="button" class="btn small" data-act="idee-programm" data-id="${esc(v.id)}">→ Ins Programm</button>
+        <button type="button" class="btn small gefahr" data-act="idee-del" data-id="${esc(v.id)}">Löschen</button>
+      </div>
+    </div></article>`).join('');
+}
+
+/* ── Zusagen ── */
+function viewZusagen(d) {
+  const zs = zusagen(d);
+  const meine = zs.find(z => normName(z.name) === normName(name));
+  const gr = { ja: [], vielleicht: [], nein: [] };
+  zs.forEach(z => (gr[z.zusage] || gr.vielleicht).push(z.name));
+  const KNOPF = { ja: 'Bin dabei 🎉', vielleicht: 'Vielleicht', nein: 'Kann leider nicht' };
+  const UEBER = { ja: 'Dabei', vielleicht: 'Vielleicht', nein: 'Abgesagt' };
+  const g = gruppe(d);
+  return `<section class="panel">
+    <h2>Bist du dabei, ${esc(name)}?</h2>
+    <div class="aktionen">${['ja', 'vielleicht', 'nein'].map(z =>
+      `<button type="button" class="btn${meine && meine.zusage === z ? ' aktiv' : ''}" data-act="zusage" data-wert="${z}">${KNOPF[z]}</button>`).join('')}</div>
+  </section>
+  <section class="panel">
+    ${['ja', 'vielleicht', 'nein'].map(z => `<h3 class="tag">${UEBER[z]} (${gr[z].length})</h3>
+      <p style="margin:.2rem 0 0">${gr[z].length ? gr[z].map(esc).join(', ') : '<span class="soft">–</span>'}</p>`).join('')}
+    <div class="aktionen">
+      ${gr.ja.length && gr.ja.length !== g ? `<button type="button" class="btn small" data-act="gruppe-zusagen" data-wert="${gr.ja.length}">Gruppengröße auf ${gr.ja.length} setzen</button>` : ''}
+      <button type="button" class="btn small" data-act="qr" data-hash="zusagen" data-titel="Zusagen">QR-Code zum Teilen</button>
+    </div>
+  </section>`;
+}
+
+
+/* ═══════════ Ereignisse ═══════════ */
+
+view.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]');
+  if (!b || b.tagName === 'SELECT') return;
+  const id = b.dataset.id;
+  const d = sicht();
+  switch (b.dataset.act) {
+    case 'neu': oeffneProgramm(null); break;
+    case 'bearbeiten': {
+      const p = d.programm.find(x => String(x.id) === id);
+      if (p) oeffneProgramm(p);
+      break;
+    }
+    case 'loeschen': {
+      const p = d.programm.find(x => String(x.id) === id);
+      if (p && confirm(`„${p.titel}“ wirklich löschen?\nBewertungen und Kommentare dazu werden mitgelöscht.`)) {
+        schreiben({ aktion: 'loeschen', blatt: 'Programm', id: id });
+      }
+      break;
+    }
+    case 'qr': zeigeQr(b.dataset.hash, b.dataset.titel); break;
+    case 'gruppe': gruppeSetzen(d); break;
+    case 'gruppe-zusagen':
+      schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'gruppengroesse', wert: String(b.dataset.wert) });
+      break;
+    case 'kom-del': schreiben({ aktion: 'loeschen', blatt: 'Kommentare', id: id }); break;
+    case 'stimme':
+      schreiben({ aktion: 'neu', blatt: 'Stimmen', id: uuid(), felder: { vorschlagId: id, aktiv: b.dataset.wert } });
+      break;
+    case 'idee-programm': {
+      const v = d.vorschlaege.find(x => String(x.id) === id);
+      if (v) oeffneProgramm(null, { titel: String(v.text).slice(0, 200) });
+      break;
+    }
+    case 'idee-del': {
+      const v = d.vorschlaege.find(x => String(x.id) === id);
+      if (v && confirm(`Idee „${v.text}“ löschen?`)) schreiben({ aktion: 'loeschen', blatt: 'Vorschlaege', id: id });
+      break;
+    }
+    case 'zusage':
+      schreiben({ aktion: 'neu', blatt: 'Teilnehmer', id: uuid(), felder: { zusage: b.dataset.wert } });
+      break;
+  }
+});
+
+view.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.dataset.act === 'status') {
+    schreiben({ aktion: 'aendern', blatt: 'Programm', id: t.dataset.id, felder: { status: t.value } });
+    return;
+  }
+  if (t.dataset.filter) {
+    filter[t.dataset.filter] = t.type === 'checkbox' ? t.checked : t.value;
+    lsSet('jga_filter', JSON.stringify(filter));
+    render();
+  }
+});
+
+view.addEventListener('input', ev => {
+  const t = ev.target;
+  if (t.type === 'range') { const o = document.getElementById('o-' + t.name); if (o) o.textContent = t.value; }
+});
+
+view.addEventListener('submit', ev => {
+  ev.preventDefault();
+  const f = ev.target, el = f.elements;
+  if (f.id === 'idee-form') {
+    const t = el.text.value.trim();
+    if (t) schreiben({ aktion: 'neu', blatt: 'Vorschlaege', id: uuid(), felder: { text: t } });
+  } else if (f.classList.contains('kom-form')) {
+    const t = el.text.value.trim();
+    if (t) schreiben({ aktion: 'neu', blatt: 'Kommentare', id: uuid(), felder: { programmId: f.dataset.pid, text: t } });
+  } else if (f.id === 'bew-form') {
+    const felder = { programmId: f.dataset.pid, notiz: el.notiz.value.trim() };
+    KRITERIEN.forEach(k => { felder[k.key] = el[k.key].value; });
+    schreiben({ aktion: 'neu', blatt: 'Bewertungen', id: uuid(), felder: felder });
+    toast('Danke für deine Bewertung!');
+    springeZu = f.dataset.pid;
+    location.hash = '#programm';
+  }
+});
+
+document.addEventListener('toggle', ev => {
+  const k = ev.target.dataset && ev.target.dataset.key;
+  if (!k) return;
+  if (ev.target.open) offen.add(k); else offen.delete(k);
+}, true);
+
+window.addEventListener('hashchange', () => { const ziel = springeZu; render(); if (!ziel) window.scrollTo(0, 0); });
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && pw && Date.now() - zuletztGeholt > 20000) holen();
+});
+
+$('#btn-neuladen').addEventListener('click', () => { $('#sync').textContent = 'Lädt…'; holen(); });
+
+const menu = $('#menu');
+document.addEventListener('click', ev => { if (menu.open && !menu.contains(ev.target)) menu.open = false; });
+menu.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-menu]');
+  if (!b) return;
+  menu.open = false;
+  const d = sicht();
+  if (b.dataset.menu === 'name') {
+    const n = (prompt('Dein Name:', name) || '').trim();
+    if (n) { name = n.slice(0, 40); lsSet('jga_name', name); render(); }
+  } else if (b.dataset.menu === 'titel') {
+    const t = prompt('Titel der Seite (z. B. „JGA Lisa“):', d.einstellungen.titel || '');
+    if (t != null) schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'titel', wert: t.trim() });
+  } else if (b.dataset.menu === 'qr') {
+    zeigeQr(location.hash.replace(/^#/, '') || 'programm', document.title);
+  } else if (b.dataset.menu === 'abmelden') {
+    if (!pending.length || confirm('Es wird noch gespeichert. Trotzdem abmelden?')) abmelden('');
+  }
+});
+
+function gruppeSetzen(d) {
+  const v = prompt('Wie viele Personen seid ihr insgesamt (inkl. Braut)?', d.einstellungen.gruppengroesse || '');
+  if (v == null || v.trim() === '') return;
+  const n = parseInt(v, 10);
+  if (!(n >= 1 && n <= 999)) { toast('Bitte eine Zahl zwischen 1 und 999.', true); return; }
+  schreiben({ aktion: 'setzen', blatt: 'Einstellungen', id: 'gruppengroesse', wert: String(n) });
+}
+
+
+/* ═══════════ Dialog: Programm-Eintrag ═══════════ */
+
+const dlg = $('#dlg-programm'), pform = $('#programm-form');
+pform.elements.kategorie.innerHTML = KATEGORIEN.map(k => `<option>${esc(k)}</option>`).join('');
+pform.elements.status.innerHTML = STATUS.map(s => `<option>${esc(s)}</option>`).join('');
+$('#orga-felder').innerHTML = ORGA.map(o => `<label>${esc(o.label)}<select name="${o.key}">
+  <option value="">– keine Angabe –</option>
+  ${[0, 1, 2, 3, 4, 5, 6, 7].map(n => `<option value="${n}">${n}${n === 0 ? ' · ' + esc(o.low) : n === 7 ? ' · ' + esc(o.high) : ''}</option>`).join('')}
+</select></label>`).join('');
+
+function oeffneProgramm(p, vorbelegt) {
+  pform.reset();
+  pform.dataset.id = p ? String(p.id) : '';
+  $('#dlg-titel').textContent = p ? 'Eintrag bearbeiten' : 'Neuer Eintrag';
+  const q = p || Object.assign({ status: 'Idee', kategorie: KATEGORIEN[0] }, vorbelegt || {});
+  PFELDER.forEach(k => { const el = pform.elements[k]; if (el) el.value = q[k] == null ? '' : String(q[k]); });
+  $('.orga-details', pform).open = ORGA.some(o => !leer(q[o.key]));
+  dlg.showModal();
+  if (!p) pform.elements.titel.focus();
+}
+
+pform.addEventListener('submit', ev => {
+  ev.preventDefault();
+  const felder = {};
+  PFELDER.forEach(k => { felder[k] = String(pform.elements[k].value || '').trim(); });
+  if (!felder.titel) { pform.elements.titel.focus(); toast('Bitte einen Titel eingeben.', true); return; }
+  const id = pform.dataset.id;
+  if (!id) {
+    schreiben({ aktion: 'neu', blatt: 'Programm', id: uuid(), felder: felder });
+  } else {
+    const alt = sicht().programm.find(x => String(x.id) === id) || {};
+    const diff = {};
+    PFELDER.forEach(k => { if (String(alt[k] == null ? '' : alt[k]) !== felder[k]) diff[k] = felder[k]; });
+    if (Object.keys(diff).length) schreiben({ aktion: 'aendern', blatt: 'Programm', id: id, felder: diff });
+  }
+  dlg.close();
+});
+$('#dlg-abbrechen').addEventListener('click', () => dlg.close());
+
+
+/* ═══════════ QR-Code ═══════════ */
+
+let qrLib = null;
+function ladeQr() {
+  if (window.QRCode) return Promise.resolve();
+  if (!qrLib) {
+    qrLib = new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      s.onload = res;
+      s.onerror = () => { qrLib = null; rej(new Error('QR-Bibliothek nicht ladbar')); };
+      document.head.appendChild(s);
+    });
+  }
+  return qrLib;
+}
+let qrUrl = '';
+async function zeigeQr(hash, titel) {
+  qrUrl = seitenLink(hash);
+  $('#qr-titel').textContent = titel || 'QR-Code';
+  $('#qr-link').textContent = qrUrl;
+  const box = $('#qr-box');
+  box.textContent = 'Lädt…';
+  $('#dlg-qr').showModal();
+  try {
+    await ladeQr();
+    box.textContent = '';
+    new QRCode(box, { text: qrUrl, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) {
+    box.textContent = 'QR-Code konnte nicht geladen werden – nutze den Link darunter.';
+  }
+}
+$('#qr-kopieren').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(qrUrl); toast('Link kopiert'); }
+  catch (e) { prompt('Link kopieren:', qrUrl); }
+});
+
+
+/* ═══════════ Anmeldung & Start ═══════════ */
+
+function zeigeGate(msg) {
+  $('#app').hidden = true;
+  $('#gate').hidden = false;
+  $('#gate-name').hidden = !!name;
+  $('#gate-msg').textContent = msg || '';
+  $('#gate-pw').value = '';
+  $('#gate-pw').focus();
+}
+
+$('#gate-form').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const p = $('#gate-pw').value;
+  const n = name || $('#gate-name').value.trim();
+  if (!p) { $('#gate-pw').focus(); return; }
+  if (!n) { $('#gate-name').focus(); return; }
+  const btn = $('#gate-btn');
+  btn.disabled = true;
+  $('#gate-msg').textContent = '';
+  try {
+    const b = await anfrage(p);
+    if (!b.ok) { $('#gate-msg').textContent = b.fehler === 'passwort' ? 'Falsches Passwort.' : 'Server: ' + b.fehler; return; }
+    pw = p; name = n.slice(0, 40);
+    lsSet('jga_pw', pw); lsSet('jga_name', name);
+    server = b; lsSet('jga_daten', JSON.stringify(b));
+    zuletztGeholt = Date.now();
+    starteApp(false);
+  } catch (e) {
+    $('#gate-msg').textContent = 'Keine Verbindung. ' + (e.message || '');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function starteApp(nachladen) {
+  $('#gate').hidden = true;
+  $('#app').hidden = false;
+  render();
+  if (nachladen) holen();
+}
+
+function abmelden(msg) {
+  pw = ''; server = null; pending = [];
+  lsDel('jga_pw'); lsDel('jga_daten');
+  zeigeGate(msg);
+}
+
+if (!/^https:\/\/script\.google\.com\//.test(APPS_SCRIPT_URL)) zeigeGate('APPS_SCRIPT_URL ist noch nicht eingetragen.');
+else if (pw) starteApp(true);   // sofort mit gespeicherten Daten, frische kommen im Hintergrund
+else zeigeGate('');
+</script>
+</body>
+</html>
